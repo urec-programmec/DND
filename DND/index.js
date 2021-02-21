@@ -22,10 +22,21 @@ $(document).ready(function () {
     function interfaceMoveOut(event) {
         let interfase = $("#interface"),
             flag = interfase.css("display") == "none" ? false : true;
-        if(flag)
+        if(flag){
             interfase.hide(1000);
-        else
+            interfase.empty();
+            $("#button-interface").animate({
+                left: "6%",
+                top: "2%"
+            })
+        }
+        else{
             interfase.show("slow");
+            $("#button-interface").animate({
+                left: "1%",
+                top: "1%"
+            });
+        }
     }
 });
 
