@@ -51,7 +51,7 @@ $(document).ready(function () {
             interfase.css("display", "flex");
             $("#button-interface").animate({
                 left: "1.5%",
-                top: "3%"
+                top: "1.5%"
             });
         }
     }
