@@ -7,28 +7,57 @@
     <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
 </head>
 <body>
-    <div id="map">
-        
-        <div id="button-interface">
-            <img id="icon-button-interface" src="source/belt.png">
-        </div>
+<div id="map">
 
-        <div id="hero" class="hero"></div>
-        <div id="interface">
-            <div id="interface-info">
-                <p>Песок</p>
-                <p>Порох</p>
-                <p>Фитиль</p>
-                <p>Факелы</p>
-                <p>Динамит</p>
-            </div>
-            <button class="interface-button-action">Скрафти меня!</button>
-            <button class="interface-button-action">Выкинь факел!</button>
-        </div>
-        <img src="source/fone2.jpg" class="img">
-        <div id="circle"></div>
-        <div id="circle2"></div>
+    <div id="button-interface">
+        <img id="icon-button-interface" src="source/belt.png">
     </div>
-    <script src="index.js"></script>
+
+    <div id="hero" class="hero"></div>
+    <div id="interface">
+        <div id="interface-info">
+            <div class="items-for-craft">
+                <div class="wrapper-item">
+                    <div class="wrapper-img">
+                        <img src="source/sand.png">
+                    </div>
+                    X <p id="count-item-sand">30</p>
+                </div>
+                <div class="wrapper-item">
+                    <div class="wrapper-img">
+                        <img src="source/powred.png">
+                    </div>
+                    X <p id="count-item-powred">20</p>
+                </div>
+                <div class="wrapper-item">
+                    <div class="wrapper-img">
+                        <img src="source/wick.png">
+                    </div>
+                    X <p id="count-item-wick">34</p>
+                </div>
+            </div>
+            <div class="items-for-use">
+                <div class="wrapper-item">
+                    <div class="wrapper-img">
+                        <img src="source/torch-item.png">
+                    </div>
+                    X <p id="count-item-torch">12</p>
+                </div>
+                <div class="wrapper-item">
+                    <div class="wrapper-img">
+                        <img src="source/tnt.png">
+                    </div>
+                    X <p id="count-item-tnt">11</p>
+                </div>
+            </div>
+        </div>
+        <button class="interface-button-action">Скрафти меня!</button>
+        <button class="interface-button-action">Выкинь факел!</button>
+    </div>
+    <img src="source/fone2.jpg" class="img">
+    <div id="circle"></div>
+    <div id="circle2"></div>
+</div>
+<script src="index.js"></script>
 </body>
 </html>
