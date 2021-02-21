@@ -61,12 +61,25 @@
 
 #interface {
     position: absolute;
-    height: 100%;
+    height: 98%;
     width: 15%;
-    background: white;
+    background: #331C00;
     z-index: 15;
-    border: red solid 1px;
+    border: #443724 solid 3px;
+    border-radius: 20px;
     display: none;
+    justify-content: space-evenly;
+    justify-items: center;
+    flex-direction: column;
+}
+
+#interface-info{
+    border: #190D00 solid 5px;
+    border-radius: 10px;
+    height: 60%;
+    width: 85%;
+    background: #190D00;
+    margin: 0px auto;
 }
 
 #button-interface {
@@ -84,4 +97,9 @@
 #icon-button-interface {
     width: auto;
     height: 100%;
+}
+
+.interface-button-action{
+    width: 75%;
+    margin: 0px auto;
 }
