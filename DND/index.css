@@ -112,6 +112,38 @@
     padding: 10px 0px;
 }
 
+.wrapper-img{
+    width: 65px;
+    height: 65px;
+}
 
+.wrapper-img img{
+    width: auto;
+    height: 100%;
+}
+
+.wrapper-item{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    color: #CCAC7F;
+    margin: 10px auto;
+    font-family: 'Underdog', cursive;
+}
+
+.items-for-craft{
+    margin: 10px auto;
+    padding-bottom: 10px;
+    border-top: 5px solid #443724;
+    border-bottom: 5px solid #443724;
+    border-radius: 10px;
+    width: 75%;
+}
+
+.items-for-use{
+    width: 75%;
+    margin: 20px auto;
+}
 /* Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Underdog&display=swap');
