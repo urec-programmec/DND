@@ -68,6 +68,9 @@ $(document).ready(function () {
     var deltaY = size / 2 - size * 2
     var room = -1
     var inroom = false
+    var onkeypressUp = false
+    var onkeypressDown = true
+    var lamps = {}
 
     $("#hero").offset({top:size * heroY + deltaY, left:size * heroX + deltaX})
     $("#circle").offset({top:size * heroY - 109, left:size * heroX + deltaX - 125})
@@ -76,20 +79,46 @@ $(document).ready(function () {
     map[heroY][heroX] = "x"
 
     document.onkeydown = checkKey;
+    document.onkeyup = ck;
+
+    function ck(e) {
+        if (e.keyCode == '37' || e.keyCode == '38' || e.keyCode == '39' || e.keyCode == '40') {
+            if (onkeypressUp) {
+                onkeypressUp = false
+                onkeypressDown = true
+            }
+            
+            // console.log(onkeypressDown + " " + onkeypressUp + " up")
+        }
+    }
 
     function checkKey(e) {
+        
+        
+        // console.log(e.keyCode)
+
+        // console.log(onkeypressDown + " " + onkeypressUp + " down")
+        if (!onkeypressDown)
+            return
+            
+        else {
+            onkeypressDown = false
+            onkeypressUp = true
+        }
 
         e = e || window.event;
         map[heroY][heroX] = room
         
         if (e.keyCode == '38') {
-            if ($("#hero").position().top - size / 2 >= 0 && map[heroY - 1][heroX] != -1){                
+            if ($("#hero").position().top >= 0 && map[heroY - 1][heroX] != -1){                
                 heroY -= 1                 
                 $(".hero").css("background", "url('source/" + "back.png" +"') no-repeat");
+                // console.log($("#hero").position().top)
+                // console.log($(window).height()) 90, 88
             }
         }
-        else if (e.keyCode == '40') {
-            if ($("#hero").position().top + size <= $(window).height() && map[heroY + 1][heroX] != -1) {
+        else if (e.keyCode == '40') {            
+            if ($("#hero").position().top <= $(window).height() && map[heroY + 1][heroX] != -1) {
                 heroY += 1           
                 $(".hero").css("background", "url('source/" + "front.png" +"') no-repeat");
             }
@@ -101,10 +130,26 @@ $(document).ready(function () {
             }
         }
         else if (e.keyCode == '39') {
-            if ($("#hero").position().left + size <= $(window).width() && map[heroY][heroX + 1] != -1) {
+            if ($("#hero").position().left + size / 2 <= $(window).width() && map[heroY][heroX + 1] != -1) {
                 heroX += 1    
                 $(".hero").css("background", "url('source/" + "right.png" +"') no-repeat");
             }
+        }
+        else if (e.keyCode == '90' && map[heroY][heroX] != 0 && !(map[heroY][heroX] in lamps)) {
+            var lamp1 = $( "#circle" ).clone()
+            var lamp2 = $( "#circle2" ).clone()
+            lamp1.appendTo("body");
+            lamp2.appendTo("body");
+            lamp2.css("background", "url('source/lamp.png') no-repeat");
+
+            lamps[map[heroY][heroX]] = [lamp1, lamp2]
+
+        }
+        else if (e.keyCode == '88' && map[heroY][heroX] in lamps) {
+            lamps[map[heroY][heroX]][0].remove()
+            lamps[map[heroY][heroX]][1].remove()
+
+            delete lamps[map[heroY][heroX]]
         }
 
     
@@ -116,7 +161,7 @@ $(document).ready(function () {
         room = map[heroY][heroX]           
         map[heroY][heroX] = "x"
 
-        console.log(room, inroom)
+        // console.log(room, inroom)
 
         // console.log(heroX, heroY)
         $("#hero").animate({

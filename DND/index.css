@@ -98,7 +98,7 @@
     background: url("source/right.png") no-repeat;
     width: 13px;
     height: 36px;
-    z-index: 20;
+    z-index: 15;
 }
 .interface-button-action{
     width: 75%;
