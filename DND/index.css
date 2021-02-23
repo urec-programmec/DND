@@ -1,3 +1,7 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Underdog&display=swap');
+
+/* Map */
 .map {
     position: fixed;
     top: 0;
@@ -45,15 +49,26 @@
     margin-top: -125px;
     margin-left: -125px;
     opacity: 0.7;
-}   
+}
+
+.hero {
+    position: absolute;
+    display: block;
+    background: url("source/right.png") no-repeat;
+    width: 13px;
+    height: 36px;
+    z-index: 15;
+}
+
+/* Interface */
 
 #interface {
     position: absolute;
     height: 98%;
     width: 15%;
     background: #331C00;
-    z-index: 15;
     border: #443724 solid 3px;
+    z-index: 15;
     border-radius: 20px;
     display: none;
     justify-content: space-evenly;
@@ -61,16 +76,16 @@
     flex-direction: column;
 }
 
-#interface-info{
+#interface-info {
     border: #190D00 solid 5px;
+    background: #190D00;
     border-radius: 10px;
     height: 60%;
     width: 85%;
-    background: #190D00;
     margin: 0px auto;
 }
 
-#interface-info p{
+#interface-info p {
     color: #CCAC7F;
     margin: 20px 20px;
 }
@@ -92,15 +107,7 @@
     height: 100%;
 }
 
-.hero {
-    position: absolute;
-    display: block;
-    background: url("source/right.png") no-repeat;
-    width: 13px;
-    height: 36px;
-    z-index: 15;
-}
-.interface-button-action{
+.interface-button-action {
     width: 75%;
     margin: 0px auto;
     font-family: 'Underdog', cursive;
@@ -112,17 +119,17 @@
     padding: 10px 0px;
 }
 
-.wrapper-img{
+.wrapper-img {
     width: 65px;
     height: 65px;
 }
 
-.wrapper-img img{
+.wrapper-img img {
     width: auto;
     height: 100%;
 }
 
-.wrapper-item{
+.wrapper-item {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -132,7 +139,7 @@
     font-family: 'Underdog', cursive;
 }
 
-.items-for-craft{
+.items-for-craft {
     margin: 10px auto;
     padding-bottom: 10px;
     border-top: 5px solid #443724;
@@ -141,9 +148,63 @@
     width: 75%;
 }
 
-.items-for-use{
+.items-for-use {
     width: 75%;
     margin: 20px auto;
 }
-/* Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Underdog&display=swap');
+
+/* PopUp */
+.pop-container {
+    width: 100%;
+    min-height: 100%;
+    background-color: rgba(0, 0, 0, 0.65);
+    overflow: hidden;
+    position: fixed;
+    z-index: 100;
+    top: 0px;
+    display: none;
+}
+
+.pop-container .pop-container-block {
+    margin: 40px auto 0px auto;
+    width: 35%;
+    height: 500px;
+    padding: 10px 20px;
+    background: #331C00;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px #000;
+}
+
+.pop-container .popup-container-close{
+    font-family: 'Underdog', cursive;
+    float: right;
+    cursor: pointer;
+    color: #CCAC7F;
+}
+
+#pop-container-content{
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    margin: 20px auto;
+    height: 90%;
+    width: 85%;
+    font-family: 'Underdog', cursive;
+    border: #443724 solid 3px;
+    border-radius: 10px;
+    color: #CCAC7F;
+    background: #190D00;
+    padding: 10px 10px;
+}
+
+#content-explanation{
+    border-bottom: 2px #443724 solid;
+    padding: 10px 15px;
+}
+
+#content-actions{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding-bottom: 20px;
+    margin-top: 30px;
+}
