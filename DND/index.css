@@ -74,6 +74,7 @@
     justify-content: space-evenly;
     justify-items: center;
     flex-direction: column;
+    opacity: 0.8;
 }
 
 #interface-info {
@@ -83,6 +84,7 @@
     height: 60%;
     width: 85%;
     margin: 0px auto;
+    opacity: 0.8;
 }
 
 #interface-info p {
@@ -182,7 +184,7 @@
     color: #CCAC7F;
 }
 
-#pop-container-content{
+#pop-container-content-info, #pop-container-content-input{
     display: grid;
     grid-template-rows: 1fr 1fr;
     margin: 20px auto;
@@ -196,12 +198,13 @@
     padding: 10px 10px;
 }
 
-#content-explanation{
+#content-explanation-info, #content-explanation-input{
     border-bottom: 2px #443724 solid;
     padding: 10px 15px;
+    text-align: center;
 }
 
-#content-actions{
+#content-actions-info, #content-actions-input{
     display: flex;
     flex-direction: column;
     justify-content: space-around;
