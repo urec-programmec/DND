@@ -10,14 +10,35 @@ $(document).ready(function () {
     window.onresize = function () {
 
         let x = (window.defaultWidth / window.innerWidth).toFixed(2);
-        document.getElementById("circle2").style.transform = "scale(" + 1 / x + ")"
-        document.getElementById("hero").style.transform = "scale(" + 1 / x + ")"
-        document.getElementById("icon-button-interface").style.transform = "scale(" + 1 / x + ")"
+
+        for (let i of document.getElementsByClassName("lamp2")){
+            i.style.transform = "scale(" + 1 / x + ")";                
+        }   
+
+        for (let i in lamps){
+            lamps[i][0].css({left: (lamps[i][2] * size + deltaX) / x, top: (lamps[i][3] * size + deltaY) / x});
+            lamps[i][1].css({left: (lamps[i][2] * size + deltaX) / x, top: (lamps[i][3] * size + deltaY) / x});
+
+            lamps[i][0].height(250 / x);
+            lamps[i][0].width(250 / x);
+
+            lamps[i][0].css({marginTop: -125 / x, marginLeft: -125 / x});
+        }
+       
+        document.getElementById("hero").style.transform = "scale(" + 1 / x + ")";
+        document.getElementById("hero").style.left = (heroX * size + deltaX) / x + "px";
+        document.getElementById("hero").style.top = (heroY * size + deltaY) / x + "px";
+        
+
+        document.getElementById("icon-button-interface").style.transform = "scale(" + 1 / x + ")";
 
         
-        $("#circle").height(250 / x)
-        $("#circle").width(250 / x)
-        $("#circle").css({marginTop: -125 / x, marginLeft: -125 / x})
+        $("#circle").height(250 / x);
+        $("#circle").width(250 / x);
+        $("#circle").css({left: (heroX * size + deltaX) / x, top: (heroY * size + deltaY) / x});        
+        $("#circle").css({marginTop: -125 / x, marginLeft: -125 / x});
+
+        $("#circle2").css({left: (heroX * size + deltaX) / x, top: (heroY * size + deltaY) / x});
     }    
 
     function interfaceMoveOut(event) {
@@ -318,11 +339,18 @@ $(document).ready(function () {
             torchs --;
             var lamp1 = $("#circle").clone(),
                 lamp2 = $("#circle2").clone();
+
+            lamp1.attr('id', "lamp_" + heroX + "_" + heroY);
+            lamp2.attr('id', "lamp2_" + heroX + "_" + heroY);     
+            
+            lamp1.addClass("lamp1");
+            lamp2.addClass("lamp2");
+
             lamp1.appendTo("body");
             lamp2.appendTo("body");
             lamp2.css("background", "url('source/lamp.png') no-repeat");
 
-            lamps[room] = [lamp1, lamp2];
+            lamps[room] = [lamp1, lamp2, heroX, heroY];
             $("#count-item-torch").text(torchs);
         }
     }
