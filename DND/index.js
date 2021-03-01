@@ -96,6 +96,7 @@ $(document).ready(function () {
             actions = $("#content-actions-input");
         
         let P = document.createElement("P");
+        P.id = "maintext";
         P.textContent = options["main"]["head"];
         content.append(P);
         
@@ -119,7 +120,7 @@ $(document).ready(function () {
         let button = document.createElement("button");
         button.textContent = options["buttons"][0]["text"];
         button.className = "interface-button-action";
-        button.onclick = options["buttons"][0]["func"];
+        button.onclick = options["buttons"][0]["func"];        
         actions.append(button);
 
         actions.append(document.createElement("hr"));
@@ -135,6 +136,7 @@ $(document).ready(function () {
         button.textContent = options["buttons"][1]["text"];
         button.className = "interface-button-action";
         button.onclick = options["buttons"][1]["func"];
+        button.id = "GO";
         actions.append(button);
 
 
@@ -201,8 +203,7 @@ $(document).ready(function () {
             top: y
         }, 100);
 
-        MOVES_5[4] = MOVES_5[3];
-        MOVES_5[3] = MOVES_5[2];
+       
         MOVES_5[2] = MOVES_5[1];
         MOVES_5[1] = MOVES_5[0];
         MOVES_5[0] = [xx, yy];
@@ -219,10 +220,29 @@ $(document).ready(function () {
         }
     }
 
+    function heroMoveTo(x, y){
+        $("#hero").offset({
+            top: size * y + deltaY,
+            left: size * x + deltaX
+        })
+        $("#circle").offset({
+            top: size * y - 109,
+            left: size * x + deltaX - 125
+        })
+        $("#circle2").offset({
+            top: size * y - 109,
+            left: size * x + deltaX - 125
+        })
+
+        map[heroY][heroX] = room;
+        room = map[y][x];
+        map[y][x] = "x";
+        heroX = x;
+        heroY = y;
+    }
+
     function checkKey(e) {
         // console.log(e.keyCode);
-
-        
 
         if(PENDING && e.keyCode == 27 && $("#content-explanation-input").text() == "")
             closeWindow();
@@ -259,10 +279,9 @@ $(document).ready(function () {
         if (e.keyCode == '37' || e.keyCode == '38' || e.keyCode == '39' || e.keyCode == '40') 
             isgone = move(e.keyCode);
 
-
-
+        let behind = 0;
         if (isgone[0]){
-            let behind = 0;
+            
             for (let i = 0; i < VARRIORS_CURRENT.length; i++){
 
                 behind = Math.sqrt((heroX - VARRIORS_CURRENT[i]["x"]) * (heroX - VARRIORS_CURRENT[i]["x"]) + (heroY - VARRIORS_CURRENT[i]["y"]) * (heroY - VARRIORS_CURRENT[i]["y"]));
@@ -271,8 +290,10 @@ $(document).ready(function () {
                 else 
                     VARRIORS_CURRENT[i]["div"].style.opacity = 0;
 
-                if (behind <= 3)
+                if (behind <= 3){
                     attack(VARRIORS_CURRENT[i]);
+                    break;
+                }
             }
         }
 
@@ -290,9 +311,6 @@ $(document).ready(function () {
             if (room in SHOWINFO && behind > 3)
                 sayAbout();
         }     
-
-        
-    
     }
 
     function putTorch(){
@@ -408,7 +426,34 @@ $(document).ready(function () {
         }   
     }
 
+    function resetTimer(timer){
+        clearInterval(timer);
+        TIME_TO_KILL = 60;
+    }
+
+    function endThisVar(message, x, y, timer, kill){
+        heroMoveTo(x, y);
+
+        countTrys = 5;
+
+        let P = document.createElement("P");
+        P.textContent = message;
+        $("#content-explanation-input").append(P);
+        $(".interface-button-action").attr("disabled", true);
+        resetTimer(timer);
+        clearTimeout(kill);
+        setTimeout(() => {                 
+            closeWindow();
+            $(".interface-button-action").attr("disabled", false);
+        }, 1000);
+    }
+
     function attack(varrior){
+        let timer = setInterval(() => {
+            TIME_TO_KILL --;
+            $("#maintext").text(MONSTER_ATTACK + " (до смерти < " + TIME_TO_KILL + " секунд)");
+        }, 1000);
+
         let KILL = setTimeout(() => {
                         
             for (let i in lamps) {
@@ -419,89 +464,94 @@ $(document).ready(function () {
             lamps = {};
             delete lamps[room];
             $("#count-item-torch").text(torchs);
-            
-            $("#hero").offset({
-                top: size * heroStartY + deltaY,
-                left: size * heroStartX + deltaX
-            })
-            $("#circle").offset({
-                top: size * heroStartY - 109,
-                left: size * heroStartX + deltaX - 125
-            })
-            $("#circle2").offset({
-                top: size * heroStartY - 109,
-                left: size * heroStartX + deltaX - 125
-            })
+            MOVE = [];
+                    
+            endThisVar("Ты УМЕР!", heroStartX, heroStartY, timer, KILL);
+            updateInventory(varrior["prize"],"inverted");
 
-            map[heroY][heroX] = room;
-            room = 0;
-            map[heroStartY][heroStartX] = "x";
-            heroX = heroStartX;
-            heroY = heroStartY;
+        }, TIME_TO_KILL * 1000);
 
-            countTrys = 5;
-
-            let P = document.createElement("P");
-            P.textContent = "Ты УМЕР!";
-            $("#content-explanation-input").append(P);
-            $(".interface-button-action").attr("disabled", true);
-
-            setTimeout(() => {                 
-                closeWindow();
-                $(".interface-button-action").attr("disabled", false);
-            }, 1000);
-
-        }, 10000);
-
+        
         eventInput({
             "main": {
-                "head": "МОНСТР АТАКУЕТ ТЕБЯ",
+                "head": MONSTER_ATTACK,
                 "main":"Сейчас ты познаешь все муки ада и бездна разверзнется перед тобой!!!",
             },
             "buttons": [{
                 "text": "Умри!",
-                "func": function(){
-                    if (countTrys > 0)
-                        attack_varrior(varrior, KILL);}
+                "func": function() {
+                        if (countTrys > 0){
+                            if ($("#text").val() == varrior["answer"]){
+
+            
+                                VARRIORS_CURRENT.splice(VARRIORS_CURRENT.indexOf(varrior), 1);
+                                addVarrior();
+                                varrior["div"].remove();
+                                
+                                endThisVar("Ты ПОБЕДИЛ!", heroX, heroY, timer, KILL)
+                                updateInventory(varrior["prize"],"direct");
+
+                                console.log(VARRIORS_CURRENT);
+                            }
+                            else {
+                                countTrys --;
+                                let P = document.createElement("P");
+                                if (countTrys != 0)
+                                    P.textContent = "Неверно! Пытайся ещё " + countTrys + " раз!";
+                                else 
+                                    P.textContent = "Ты умрёшь.";
+                                $("#content-explanation-input").append(P);
+                            }
+                        }
+                    }
                 },
                 {
                     "text": "Убегай!",
                     "func": function(){
+                        if (MOVE.join(" ") == $("#text2").val()){
 
+                            endThisVar("Ты СБЕЖАЛ!", MOVES_5[MOVES_5.length - 1][0], MOVES_5[MOVES_5.length - 1][1], timer, KILL);
+
+                            MOVES_5 = [[heroX, heroY], [heroX, heroY], [heroX, heroY]];                           
+                        }
+                        else {
+                            $("#GO").text(["Пробуй ещё...", "Да не там ты шёл!", "Ты опять не прав. Снова, да.", "В такси бы тебя убили. Нет.", "Путь не верный.", "...there is not correct way, try again..."][parseInt(Math.random() * 6)]);
+
+                        }                            
                     }                  
                 }]
         });  
     }
 
-    function attack_varrior(varrior, kill){
-        // console.log($("#text").val());
-        // console.log(varrior["answer"]);
-        if ($("#text").val() == varrior["answer"]){
-            clearTimeout(kill);
-            let P = document.createElement("P");
-            P.textContent = "Ты победил!";
-            $("#content-explanation-input").append(P);
-            countTrys = 5;
-            $(".interface-button-action").attr("disabled", true);
-            setTimeout(() => {
-                // console.log(VARRIORS_CURRENT.indexOf(varrior));
-                VARRIORS_CURRENT.splice(VARRIORS_CURRENT.indexOf(varrior), 1);
-                addVarrior();
-                varrior["div"].remove();
-                closeWindow();
-                $(".interface-button-action").attr("disabled", false);
-            }, 1000);
-            console.log(VARRIORS_CURRENT);
+    function updateInventory(from, direction){
+        if (direction == "direct"){
+            // console.log("add");
+            // console.log("sand - (from) " + INVENTORY["sand"] + " - (to) " + from["sand"]);
+            // console.log("wick - (from) " + INVENTORY["wick"] + " - (to) " + from["wick"]);
+            // console.log("powred - (from) " + INVENTORY["powred"] + " - (to) " + from["powred"]);            
+
+            INVENTORY["sand"] += from["sand"];
+            INVENTORY["wick"] += from["wick"];
+            INVENTORY["powred"] += from["powred"];
+            
         }
-        else {
-            countTrys --;
-            let P = document.createElement("P");
-            if (countTrys != 0)
-                P.textContent = "Неверно! Пытайся ещё " + countTrys + " раз!";
-            else 
-                P.textContent = "Ты умрёшь.";
-            $("#content-explanation-input").append(P);
+        else if (direction == "inverted"){
+            // console.log("remove");
+            // console.log("sand - (from) " + from["sand"] + " - (to) " + INVENTORY["sand"]);
+            // console.log("wick - (from) " + from["wick"] + " - (to) " + INVENTORY["wick"]);
+            // console.log("powred - (from) " + from["powred"] + " - (to) " + INVENTORY["powred"]);
+
+            from["sand"] += INVENTORY["sand"]
+            from["wick"] += INVENTORY["wick"];
+            from["powred"] += INVENTORY["powred"];
+            INVENTORY["sand"] = 0;
+            INVENTORY["wick"] = 0;
+            INVENTORY["powred"] = 0;
         }
+
+        $("#count-item-sand").text(INVENTORY["sand"]);
+        $("#count-item-wick").text(INVENTORY["wick"]);
+        $("#count-item-powred").text(INVENTORY["powred"]);        
     }
 
     // враг подошёл -> 2 кнопки - сбежать и убить
@@ -545,7 +595,16 @@ $(document).ready(function () {
     SHOWINFO = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
     VARRIORS_IN = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
     countTrys = 5,
-    MOVES_5 = [[heroX, heroY], [heroX, heroY], [heroX, heroY], [heroX, heroY], [heroX, heroY]];
+    MOVES_5 = [[heroX, heroY], [heroX, heroY], [heroX, heroY]],
+    
+    MONSTER_ATTACK = "МОНСТР АТАКУЕТ ТЕБЯ",
+    TIME_TO_KILL = 60,
+    
+    INVENTORY = {
+        "sand":0,
+        "powred":0,
+        "wick":0
+    };
 
 
 //#region VARRIORS init
@@ -687,22 +746,8 @@ $(document).ready(function () {
         closeWindow();
     })
     
-    $("#hero").offset({
-        top: size * heroY + deltaY,
-        left: size * heroX + deltaX
-    })
-    $("#circle").offset({
-        top: size * heroY - 109,
-        left: size * heroX + deltaX - 125
-    })
-    $("#circle2").offset({
-        top: size * heroY - 109,
-        left: size * heroX + deltaX - 125
-    })
-    
-    room = map[heroY][heroX];
-    map[heroY][heroX] = "x";
 
+    heroMoveTo(heroX, heroY);
     document.onkeydown = checkKey;
     document.onkeyup = ck;
 
