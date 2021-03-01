@@ -157,6 +157,7 @@
 
 /* PopUp */
 .pop-container {
+    z-index: 101;
     width: 100%;
     min-height: 100%;
     background-color: rgba(0, 0, 0, 0.65);
@@ -171,6 +172,16 @@
     margin: 40px auto 0px auto;
     width: 35%;
     height: 500px;
+    padding: 10px 20px;
+    background: #331C00;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px #000;
+}
+
+.pop-container-block-input {
+    margin: 40px auto 0px auto;
+    width: 35%;
+    height: 800px;
     padding: 10px 20px;
     background: #331C00;
     border-radius: 5px;
@@ -219,6 +230,7 @@
 }
 
 .varrior {
+    z-index: 10;
     opacity: 1;
     position: absolute;
     background: red;
@@ -235,4 +247,11 @@
     color: #CCAC7F;
     cursor: pointer;
     padding: 10px 0px;
+}
+
+hr {
+    border: none; 
+    background-color: #331C00;
+    height: 2px;
+    width: 100%;
 }
