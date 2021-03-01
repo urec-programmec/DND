@@ -4,7 +4,10 @@ $(document).ready(function () {
 
         let x = (window.defaultWidth / window.innerWidth).toFixed(2);
         document.getElementById("circle2").style.transform = "scale(" + 1 / x + ")"
+        document.getElementById("hero").style.transform = "scale(" + 1 / x + ")"
+        document.getElementById("icon-button-interface").style.transform = "scale(" + 1 / x + ")"
 
+        
         $("#circle").height(250 / x)
         $("#circle").width(250 / x)
         $("#circle").css({marginTop: -125 / x, marginLeft: -125 / x})
@@ -41,10 +44,10 @@ $(document).ready(function () {
             closeWindow();
     })
 
-    $("#pop-container-input").bind("click", function (e) {
-        if ($(e.target).attr("id") == "pop-container-input")
-            closeWindow();
-    })
+    // $("#pop-container-input").bind("click", function (e) {
+    //     if ($(e.target).attr("id") == "pop-container-input")
+    //         closeWindow();
+    // })
 
     //Скрытие pop-container при клике на крестик.
     $(".popup-container-close").click(() => {        
@@ -77,15 +80,12 @@ $(document).ready(function () {
 
         if ("main" in options && "head" in options["main"] && "main" in options["main"]) {
             let P = document.createElement("P");
-            // P.className = "class_for_text";
             P.textContent = options["main"]["head"];
             content.append(P);
             P = document.createElement("P");
-            // P.className = "class_for_text";
             P.textContent = options["main"]["main"];
             content.append(P);
-            
-            // content.text(options["main"]["text"]);
+
         }
         if ("buttons" in options) {
             for (let elem of options["buttons"]) {
@@ -97,7 +97,6 @@ $(document).ready(function () {
             }
         }
         $("#pop-container-info").show(750);
-        // onkeypressDown = false;
     }
 
     function eventInput(options){
@@ -105,9 +104,22 @@ $(document).ready(function () {
         let content = $("#content-explanation-input"),
             actions = $("#content-actions-input");
 
-        if ("main" in options && "text" in options["main"]) {
-            content.text(options["main"]["text"]);
+        if ("main" in options && "head" in options["main"] && "main" in options["main"]) {
+            let P = document.createElement("P");
+            P.textContent = options["main"]["head"];
+            content.append(P);
+            P = document.createElement("P");
+            P.textContent = options["main"]["main"];
+            content.append(P);
         }
+
+        let text = document.createElement("input");
+        text.type = "text";
+        text.id = "text";
+        text.className = "textblock";
+        text.placeholder = "Вводи скорей ответ, дурень!";
+        actions.append(text);
+
         if ("buttons" in options) {
             for (let elem of options["buttons"]) {
                 let button = document.createElement("button");
@@ -116,13 +128,9 @@ $(document).ready(function () {
                 button.onclick = elem["func"];
                 actions.append(button);
             }
-        }
-        if ("text" in options) {
-
-        }
+        }        
 
         $("#pop-container-input").show(750);
-        // onkeypressDown = false;
     }
 
 //#region map
@@ -152,6 +160,8 @@ $(document).ready(function () {
 
     var heroX = 1,
         heroY = 21,
+        heroStartX = 1,
+        heroStartY = 21,
         size = $(window).width() / 108,
         deltaX = size / 4,
         deltaY = size / 2 - size * 2,
@@ -162,9 +172,12 @@ $(document).ready(function () {
         lamps = {},
         torchs = 5,
         PENDING = false,
-        VARRIORS = [],
+        VARRIORS_GLOBAL = [],
+        VARRIORS_CURRENT = [],
         MOVE = [],
-        SHOWINFO = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28];
+        SHOWINFO = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
+        VARRIORS_IN = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
+        countTrys = 5;
 
     $("#hero").offset({
         top: size * heroY + deltaY,
@@ -258,6 +271,11 @@ $(document).ready(function () {
 
     function checkKey(e) {
         // console.log(e.keyCode);
+
+        if(e.keyCode == 67)
+            clearAll();
+
+
         if(PENDING && e.keyCode == 27)
             closeWindow();
 
@@ -302,7 +320,24 @@ $(document).ready(function () {
 
             if (room in SHOWINFO)
                 sayAbout();
+        }     
+
+        if (isgone[0]){
+            let behind = 0;
+            for (let i = 0; i < VARRIORS_CURRENT.length; i++){
+
+                behind = Math.sqrt((heroX - VARRIORS_CURRENT[i]["x"]) * (heroX - VARRIORS_CURRENT[i]["x"]) + (heroY - VARRIORS_CURRENT[i]["y"]) * (heroY - VARRIORS_CURRENT[i]["y"]));
+                if (behind <= 5)
+                    VARRIORS_CURRENT[i]["div"].style.opacity = (5 - behind) / 5
+                else 
+                    VARRIORS_CURRENT[i]["div"].style.opacity = 0;
+
+                if (behind <= 3)
+                    attack(VARRIORS_CURRENT[i]);
+            }
         }
+    
+    }
 
     function putTorch(){
         if (room != 0 && !(room in lamps) && torchs > 0){
@@ -361,13 +396,282 @@ $(document).ready(function () {
             });
     }
 
+    function clearAll(){
+        if (SHOWINFO.length != 0){
+            SHOWINFO = [];
+            eventInfo({
+                "main": {
+                    "head": "XAXAXA",
+                    "main":"БОЛЬШЕ ТЫ НИЧЕГО НЕ УЗНАЕШЬ, ГЛУПЕЦ-ГОЛУБЕЦ!",
+                },
+                "buttons": [{
+                    "text": "Окей...",
+                    "func": closeWindow
+                }]
+            });
+        }
+    }
+
     $("#putTorch").click(putTorch);
     $("#getTorch").click(getTorch);
     
     $("#sayAbout").click(sayAbout);
+
+    $("#clearAll").click(clearAll);
+
+    
+    $("#count-item-torch").text(torchs);
+
+//#region VARRIORS init
+
+    VARRIORS_GLOBAL.push(
+        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+        "answer":"1",
+        "prize": {
+            "sand":1,
+            "powred":0,
+            "wick":0},
+        "x": -1,
+        "y": -1,
+        "div":"",
+        "room":0});
+    VARRIORS_GLOBAL.push(
+        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+        "answer":"2",
+        "prize": {
+            "sand":0,
+            "powred":1,
+            "wick":0},
+        "x": -1,
+        "y": -1,
+        "div":"",
+        "room":0});
+    VARRIORS_GLOBAL.push(
+        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+        "answer":"4",
+        "prize": {
+            "sand":0,
+            "powred":0,
+            "wick":1},
+        "x": -1,
+        "y": -1,
+        "div":"",
+        "room":0});
+    VARRIORS_GLOBAL.push(
+        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+        "answer":"4",
+        "prize": {
+            "sand":1,
+            "powred":0,
+            "wick":1},
+        "x": -1,
+        "y": -1,
+        "div":"",
+        "room":0});
+    VARRIORS_GLOBAL.push(
+        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+        "answer":"5",
+        "prize": {
+            "sand":0,
+            "powred":1,
+            "wick":1},
+        "x": -1,
+        "y": -1,
+        "div":"",
+        "room":0});
+    VARRIORS_GLOBAL.push(
+        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+        "answer":"6",
+        "prize": {
+            "sand":1,
+            "powred":1,
+            "wick":0},
+        "x": -1,
+        "y": -1,
+        "div":"",
+        "room":0});
+    VARRIORS_GLOBAL.push(
+        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+        "answer":"7",
+        "prize": {
+            "sand":0,
+            "powred":0,
+            "wick":0},
+        "x": -1,
+        "y": -1,
+        "div":"",
+        "room":0});
+    VARRIORS_GLOBAL.push(
+        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+        "answer":"8",
+        "prize": {
+            "sand":1,
+            "powred":1,
+            "wick":1},
+        "x": -1,
+        "y": -1,
+        "div":"",
+        "room":0});
+    VARRIORS_GLOBAL.push(
+        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+        "answer":"9",
+        "prize": {
+            "sand":0,
+            "powred":1,
+            "wick":0},
+        "x": -1,
+        "y": -1,
+        "div":"",
+        "room":0});
+    VARRIORS_GLOBAL.push(
+        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+        "answer":"10",
+        "prize": {
+            "sand":2,
+            "powred":0,
+            "wick":0},
+        "x": -1,
+        "y": -1,
+        "div":"",
+        "room":0});
+
+    
+    //#endregion
+
+
+    function addVarrior(){
+        if (VARRIORS_GLOBAL.length != 0) {
+            let newroom = parseInt(Math.random() * 28 + 1);
+            while (newroom in lamps || newroom == room || !(newroom in VARRIORS_IN))
+                newroom = parseInt(Math.random() * 28 + 1);
+            
+            delete VARRIORS_IN[newroom];
+            let vars = [];
+            for (let i = 0; i < map.length; i ++){
+                for (let j = 0; j < map[0].length; j ++){
+                    if (map[i][j] == newroom){
+                        vars.push([j, i]);
+                    }
+                }    
+            }
+            let rand = parseInt(Math.random() * vars.length);
+            let xVar = vars[rand][0];
+            let yVar = vars[rand][1];
+
+            let varrior = VARRIORS_GLOBAL.pop();
+            varrior["room"] = newroom;
+            varrior["x"] = xVar;
+            varrior["y"] = yVar;
+
+            let div = document.createElement("div");
+            div.className = "varrior";
+            div.style.left = xVar * size + "px";
+            div.style.top = yVar * size + "px";
+            div.style.height = size + "px";
+            div.style.width = size + "px";
+            div.id = "varrior" + newroom;
+            
+            
+            varrior["div"] = div;
+
+            $("#varriors").append(div);
+            VARRIORS_CURRENT.push(varrior);
+        }   
+    }
+
+    for (let i in [1, 1, 1, 1, 1])
+        addVarrior();
+
     
 
-    $("#count-item-torch").text(torchs);
+    function attack(varrior){
+        let KILL = setTimeout(() => {
+                        
+            for (let i in lamps) {
+                lamps[i][0].remove();
+                lamps[i][1].remove();
+            }
+            torchs = 5;
+            lamps = {};
+            delete lamps[room];
+            $("#count-item-torch").text(torchs);
+            
+            $("#hero").offset({
+                top: size * heroStartY + deltaY,
+                left: size * heroStartX + deltaX
+            })
+            $("#circle").offset({
+                top: size * heroStartY - 109,
+                left: size * heroStartX + deltaX - 125
+            })
+            $("#circle2").offset({
+                top: size * heroStartY - 109,
+                left: size * heroStartX + deltaX - 125
+            })
+
+            map[heroY][heroX] = room;
+            room = 0;
+            map[heroStartY][heroStartX] = "x";
+            heroX = heroStartX;
+            heroY = heroStartY;
+
+            countTrys = 5;
+
+            let P = document.createElement("P");
+            P.textContent = "Вы УМЕРЛИ!";
+            $("#content-explanation-input").append(P);
+
+            setTimeout(() => {                 
+                closeWindow();
+            }, 1000);
+
+        }, 10000);
+
+        eventInput({
+            "main": {
+                "head": "МОНСТР АТАКУЕТ ТЕБЯ",
+                "main":"Сейчас ты познаешь все муки ада и бездна разверзнется перед тобой!!!",
+            },
+            "buttons": [{
+                "text": "Умри!",
+                "func": function(){
+                    if (countTrys > 0)
+                        attack_varrior(varrior, KILL);
+                }
+            }]
+        });  
+    }
+
+    function attack_varrior(varrior, kill){
+        // console.log($("#text").val());
+        // console.log(varrior["answer"]);
+        if ($("#text").val() == varrior["answer"]){
+            clearTimeout(kill);
+            let P = document.createElement("P");
+            P.textContent = "Вы победили!";
+            $("#content-explanation-input").append(P);
+            countTrys = 5;
+            setTimeout(() => {
+                // console.log(VARRIORS_CURRENT.indexOf(varrior));
+                VARRIORS_CURRENT.splice(VARRIORS_CURRENT.indexOf(varrior), 1);
+                addVarrior();
+                varrior["div"].remove();
+                closeWindow();
+            }, 1000);
+            console.log(VARRIORS_CURRENT);
+        }
+        else {
+            countTrys --;
+            let P = document.createElement("P");
+            if (countTrys != 0)
+                P.textContent = "Неверно! Пытайся ещё " + countTrys + " раз!";
+            else 
+                P.textContent = "Ты умрёшь.";
+            $("#content-explanation-input").append(P);
+        }
+    }
+
+    console.log(VARRIORS_CURRENT)        
 });
 
 
