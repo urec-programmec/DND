@@ -452,7 +452,7 @@ $(document).ready(function () {
             eventInfo({
                 "main": {
                     "head": "Вы вошли в комнату номер " + String(room) + ".", 
-                    "main":"Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+                    "main": ROOMS[room - 1],
                 },
                 "buttons": [{
                     "text": "Окей...",
@@ -768,6 +768,20 @@ $(document).ready(function () {
             });
     }
 
+    function craftTNT(){
+        if (INVENTORY["sand"] > 0 && INVENTORY["wick"] > 0 && INVENTORY["powred"] > 0){
+            INVENTORY["sand"] --;
+            INVENTORY["wick"] --;
+            INVENTORY["powred"] --;
+
+            TNT ++;
+            $("#count-item-tnt").text(TNT);
+            $("#count-item-sand").text(INVENTORY["sand"]);
+            $("#count-item-wick").text(INVENTORY["wick"]);
+            $("#count-item-powred").text(INVENTORY["powred"]);
+        }
+    }
+
     // враг подошёл -> 2 кнопки - сбежать и убить
     // храним массив путей
     // храним общий массив мобов (без х, у) и текущий {
@@ -810,6 +824,35 @@ $(document).ready(function () {
     VARRIORS_IN = [],
     countTrys = 5,
     MOVES_5 = [[heroX, heroY], [heroX, heroY], [heroX, heroY]],
+
+    ROOMS = ["1. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "2. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "3. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "4. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "5. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "6. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "7. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "8. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "9. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "10. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "11. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "12. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "13. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "14. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "15. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "16. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "17. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "18. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "19. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "20. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "21. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "22. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "23. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "24. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "25. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "26. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "27. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
+    "28. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae."],
     
     MONSTER_ATTACK = "МОНСТР АТАКУЕТ ТЕБЯ",
     TIME_TO_KILL = 60,
@@ -825,7 +868,9 @@ $(document).ready(function () {
     POWRED = [],
     SAND_IN = [],
     WICK_IN = [],
-    POWRED_IN = [];
+    POWRED_IN = [],
+    
+    TNT = 0;
 
     //Скрытие pop-container при клике за область экрана.
     $("#pop-container-info").bind("click", function (e) {
@@ -867,6 +912,7 @@ $(document).ready(function () {
 
     $("#clearAll").click(clearAll);
 
+    $("#craftTNT").click(craftTNT);
     
     $("#count-item-torch").text(torchs);
 
