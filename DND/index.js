@@ -319,7 +319,7 @@ $(document).ready(function () {
     }
 
     function checkKey(e) {
-        // console.log(e.keyCode);
+        console.log(e.keyCode);
 
         if(PENDING && e.keyCode == 27 && $("#content-explanation-input").text() == "")
             closeWindow();
@@ -341,8 +341,20 @@ $(document).ready(function () {
             putTorch();
             return null;            
 
-        } else if (e.keyCode == '88') {
+        } 
+        
+        if (e.keyCode == '88') {
             getTorch();  
+            return null;         
+        }
+
+        if (e.keyCode == '32') {
+            putTNT();  
+            return null;         
+        }
+
+        if (e.keyCode == '8') {
+            getTNT();  
             return null;         
         }
 
@@ -816,7 +828,7 @@ $(document).ready(function () {
     }
 
     function putTNT(){
-        if(TNT > 0 && (!(room in TNTS) && ROOMS_WITH_TNT > 0 || room in TNTS)){
+        if(TNT > 0 && room > 0 && (!(room in TNTS) && ROOMS_WITH_TNT > 0 || room in TNTS)){
             for (let i in TNTS){
                 for (let j = 0; j < TNTS[i].length; j++)
                     if (TNTS[i][j][1] == heroX && TNTS[i][j][2] == heroY)
@@ -850,7 +862,21 @@ $(document).ready(function () {
     }
 
     function getTNT(){
+        if (room in TNTS){
+            TNT ++;
+            TNTS[room][TNTS[room].length - 1][0].remove();
 
+            if (TNTS[room].length == 1){
+                delete TNTS[room];
+                ROOMS_WITH_TNT ++;
+            }
+                
+            else
+            TNTS[room].splice(TNTS[room].length - 1, 1);
+
+            $("#count-item-room").text(ROOMS_WITH_TNT);
+            $("#count-item-tnt").text(TNT);
+        }
     }    
 
     var heroX = 1,
