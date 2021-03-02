@@ -72,12 +72,16 @@ $(document).ready(function () {
             $("#content-explanation-info").html("");
             $("#content-actions-info").html("");
         }
-        else {
+        else if (whatnow == "input"){
             $("#pop-container-input").hide(750);
             $("#content-explanation-input").html("");
             $("#content-actions-input").html("");
         }
-
+        else {
+            $("#pop-container-get").hide(750);
+            $("#content-explanation-get").html("");
+            $("#content-actions-get").html("");
+        }
         whatnow = "";
     }
 
@@ -107,6 +111,39 @@ $(document).ready(function () {
             }
         }
         $("#pop-container-info").show(750);
+    }
+
+    function eventGet(options){
+        whatnow = "get";
+
+        PENDING = true;
+
+        let content = $("#content-explanation-get"),
+            actions = $("#content-actions-get");
+
+        
+        let P = document.createElement("P");
+        P.textContent = options["main"]["head"];
+        content.append(P);
+        P = document.createElement("P");
+        P.textContent = options["main"]["main"];
+        content.append(P);
+
+        let text = document.createElement("input");
+        text.type = "text";
+        text.id = "text_get";
+        text.className = "textblock";
+        text.placeholder = "Хочешь яблочко - сруби яблоню.";
+        actions.append(text);
+
+        let button = document.createElement("button");
+        button.textContent = options["buttons"][0]["text"];
+        button.className = "interface-button-action";
+        button.onclick = options["buttons"][0]["func"];
+        button.id = "button_get"
+        actions.append(button);
+
+        $("#pop-container-get").show(750);
     }
 
     function eventInput(options){
@@ -301,6 +338,10 @@ $(document).ready(function () {
             isgone = move(e.keyCode);
 
         let behind = 0;
+        let sandX = 0;
+        let wickX = 0;
+        let powredX = 0
+
         if (isgone[0]){
             
             for (let i = 0; i < VARRIORS_CURRENT.length; i++){
@@ -316,6 +357,46 @@ $(document).ready(function () {
                     break;
                 }
             }
+
+            for (let i = 0; i < SAND.length; i++){
+                sandX = Math.sqrt((heroX - SAND[i]["x"]) * (heroX - SAND[i]["x"]) + (heroY - SAND[i]["y"]) * (heroY - SAND[i]["y"]));
+                if (sandX <= 7)
+                    SAND[i]["div"].style.opacity = (7 - sandX) / 7;
+                else 
+                    SAND[i]["div"].style.opacity = 0;
+
+                if (sandX  == 0){
+                    getResourse(SAND[i]);
+                    break;
+                }
+            }
+
+            for (let i = 0; i < WICK.length; i++){
+                wickX = Math.sqrt((heroX - WICK[i]["x"]) * (heroX - WICK[i]["x"]) + (heroY - WICK[i]["y"]) * (heroY - WICK[i]["y"]));
+                if (wickX <= 7)
+                    WICK[i]["div"].style.opacity = (7 - wickX) / 7;
+                else 
+                    WICK[i]["div"].style.opacity = 0;
+
+                if (wickX  == 0){
+                    getResourse(WICK[i]);
+                    break;
+                }
+            }
+
+            for (let i = 0; i < POWRED.length; i++){
+                powredX = Math.sqrt((heroX - POWRED[i]["x"]) * (heroX - POWRED[i]["x"]) + (heroY - POWRED[i]["y"]) * (heroY - POWRED[i]["y"]));
+                if (powredX <= 7)
+                    POWRED[i]["div"].style.opacity = (7 - powredX) / 7;
+                else 
+                    POWRED[i]["div"].style.opacity = 0;
+
+                if (powredX  == 0){
+                    getResourse(POWRED[i]);
+                    break;
+                }
+            }
+
         }
 
         if (isgone[1]){
@@ -329,7 +410,7 @@ $(document).ready(function () {
             else if (room != 0 && (MOVE.length != 0 && MOVE[MOVE.length - 1] != room || MOVE.length == 0))
                 MOVE.push(room);
 
-            if (room in SHOWINFO && behind > 3)
+            if (room in SHOWINFO && behind > 3 && sandX != 0 && wickX != 0 && powredX != 0)
                 sayAbout();
         }     
     }
@@ -414,24 +495,32 @@ $(document).ready(function () {
         }
     }
 
+    function takeXYbyRoom(room){
+        let vars = [];
+        for (let i = 0; i < map.length; i ++){
+            for (let j = 0; j < map[0].length; j ++){
+                if (map[i][j] == room){
+                    vars.push([j, i]);
+                }
+            }    
+        }
+        let rand = parseInt(Math.random() * vars.length);
+
+        return [vars[rand][0], vars[rand][1]];
+    }
+
     function addVarrior(){
         if (VARRIORS_GLOBAL.length != 0) {
             let newroom = parseInt(Math.random() * 28 + 1);
-            while (newroom in lamps || newroom == room || !(newroom in VARRIORS_IN))
+            while (newroom in lamps || newroom == room ||  VARRIORS_IN.indexOf(newroom) != -1)
                 newroom = parseInt(Math.random() * 28 + 1);
             
-            delete VARRIORS_IN[newroom];
-            let vars = [];
-            for (let i = 0; i < map.length; i ++){
-                for (let j = 0; j < map[0].length; j ++){
-                    if (map[i][j] == newroom){
-                        vars.push([j, i]);
-                    }
-                }    
-            }
-            let rand = parseInt(Math.random() * vars.length);
-            let xVar = vars[rand][0];
-            let yVar = vars[rand][1];
+            VARRIORS_IN.push(newroom);
+
+            let XY = takeXYbyRoom(newroom);
+
+            let xVar = XY[0];
+            let yVar = XY[1];
 
             let varrior = VARRIORS_GLOBAL.pop();
             varrior["room"] = newroom;
@@ -454,6 +543,63 @@ $(document).ready(function () {
         }   
     }
 
+    function addResourse(name, task, answer){
+        let newroom = parseInt(Math.random() * 28 + 1);
+        while (newroom == room || VARRIORS_IN.indexOf(newroom) != -1 || SAND_IN.indexOf(newroom) != -1 || WICK_IN.indexOf(newroom) != -1 || POWRED_IN.indexOf(newroom) != -1)
+            newroom = parseInt(Math.random() * 28 + 1);
+
+        let XY = takeXYbyRoom(newroom);
+
+        let xVar = XY[0];
+        let yVar = XY[1];
+
+        let resourse = {
+            "name":name,
+            "task": task,
+            "answer": answer,
+            "prize":{
+                "sand":0,
+                "powred":0,
+                "wick":0},
+            "x":xVar,
+            "y":yVar,
+            "div":"",
+            "room":newroom
+        };
+
+        let div = document.createElement("div");
+        div.className = name;
+        div.style.left = xVar * size + "px";
+        div.style.top = yVar * size + "px";
+        div.style.height = size + "px";
+        div.style.width = size + "px";
+        div.id = name + newroom;
+        resourse["div"] = div;
+
+        if (name == "sand"){
+            resourse["prize"]["sand"] = 1;
+            $("#sands").append(div);
+            SAND.push(resourse);
+            SAND_IN.push(newroom);
+        }
+        else if (name == "wick"){
+            resourse["prize"]["wick"] = 1;
+            $("#wicks").append(div);
+            WICK.push(resourse);
+            WICK_IN.push(newroom);
+        }
+        else if (name == "powred"){
+            resourse["prize"]["powred"] = 1;
+            $("#powreds").append(div);
+            POWRED.push(resourse);
+            POWRED_IN.push(newroom);
+        }
+
+        // console.log(SAND_IN);
+        // console.log(WICK_IN);
+        // console.log(POWRED_IN);
+    }
+
     function resetTimer(timer){
         clearInterval(timer);
         TIME_TO_KILL = 60;
@@ -466,7 +612,12 @@ $(document).ready(function () {
 
         let P = document.createElement("P");
         P.textContent = message;
-        $("#content-explanation-input").append(P);
+
+        if (timer == null)
+            $("#content-explanation-get").append(P);
+        else 
+            $("#content-explanation-input").append(P);
+
         $(".interface-button-action").attr("disabled", true);
         resetTimer(timer);
         clearTimeout(kill);
@@ -490,7 +641,7 @@ $(document).ready(function () {
             }
             torchs = 5;
             lamps = {};
-            delete lamps[room];
+            // delete lamps[room];
             $("#count-item-torch").text(torchs);
             MOVE = [];
                     
@@ -503,16 +654,15 @@ $(document).ready(function () {
         eventInput({
             "main": {
                 "head": MONSTER_ATTACK,
-                "main":"Сейчас ты познаешь все муки ада и бездна разверзнется перед тобой!!!",
+                "main": varrior["task"],
             },
             "buttons": [{
-                "text": "Умри!",
+                "text": "Умри, монстр!",
                 "func": function() {
                         if (countTrys > 0){
                             if ($("#text").val() == varrior["answer"]){
-
-            
                                 VARRIORS_CURRENT.splice(VARRIORS_CURRENT.indexOf(varrior), 1);
+                                VARRIORS_IN.splice(VARRIORS_IN.indexOf(varrior["room"]), 1)
                                 addVarrior();
                                 varrior["div"].remove();
                                 
@@ -582,6 +732,42 @@ $(document).ready(function () {
         $("#count-item-powred").text(INVENTORY["powred"]);        
     }
 
+    function getResourse(resourse){
+        // console.log(resourse["name"]);
+        eventGet({
+                "main": {
+                    "head": "Шахта по добыче " + (resourse["name"] == "sand" ? "ПЕСКА!" : (resourse["name"] == "wick" ? "НИТЕЙ!" : "ПОРОХА!")), 
+                    "main": resourse["task"],
+                },
+                "buttons": [{
+                    "text": "Добыть!",
+                    "func": function(){
+                        // console.log(resourse["answer"]);
+                        if(resourse["answer"] == $("#text_get").val()){
+                            updateInventory(resourse["prize"], "direct");
+                            if (resourse["name"] == "sand"){
+                                SAND.splice(SAND.indexOf(resourse), 1);
+                                SAND_IN.splice(SAND_IN.indexOf(resourse["room"]), 1);                                
+                            }
+                            else if (resourse["name"] == "wick"){
+                                WICK.splice(WICK.indexOf(resourse), 1);
+                                WICK_IN.splice(WICK_IN.indexOf(resourse["room"]), 1);
+                            }
+                            else {
+                                POWRED.splice(POWRED.indexOf(resourse), 1);
+                                POWRED_IN.splice(POWRED_IN.indexOf(resourse["room"]), 1);
+                            } 
+                            resourse["div"].remove();
+                            endThisVar("Ресурс получен!", heroX, heroY, null, null);
+                        }
+                        else {
+                            $("#button_get").text(["У тебя ошибка в рассчётах.", "Отвечаю! У тебя ошибка в рассчётах!", "Ты опять не прав. Снова, да.", "Это не тот ответ", "Будь ты учёным, тебя бы сожгли.", "...there is not correct answer, try again..."][parseInt(Math.random() * 6)]);
+                        }
+                    }
+                }]
+            });
+    }
+
     // враг подошёл -> 2 кнопки - сбежать и убить
     // храним массив путей
     // храним общий массив мобов (без х, у) и текущий {
@@ -621,7 +807,7 @@ $(document).ready(function () {
     VARRIORS_CURRENT = [],
     MOVE = [],
     SHOWINFO = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
-    VARRIORS_IN = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
+    VARRIORS_IN = [],
     countTrys = 5,
     MOVES_5 = [[heroX, heroY], [heroX, heroY], [heroX, heroY]],
     
@@ -632,129 +818,23 @@ $(document).ready(function () {
         "sand":0,
         "powred":0,
         "wick":0
-    };
-
-
-//#region VARRIORS init
-
-    VARRIORS_GLOBAL.push(
-        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-        "answer":"1",
-        "prize": {
-            "sand":1,
-            "powred":0,
-            "wick":0},
-        "x": -1,
-        "y": -1,
-        "div":"",
-        "room":0});
-    VARRIORS_GLOBAL.push(
-        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-        "answer":"1",
-        "prize": {
-            "sand":0,
-            "powred":1,
-            "wick":0},
-        "x": -1,
-        "y": -1,
-        "div":"",
-        "room":0});
-    VARRIORS_GLOBAL.push(
-        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-        "answer":"1",
-        "prize": {
-            "sand":0,
-            "powred":0,
-            "wick":1},
-        "x": -1,
-        "y": -1,
-        "div":"",
-        "room":0});
-    VARRIORS_GLOBAL.push(
-        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-        "answer":"1",
-        "prize": {
-            "sand":1,
-            "powred":0,
-            "wick":1},
-        "x": -1,
-        "y": -1,
-        "div":"",
-        "room":0});
-    VARRIORS_GLOBAL.push(
-        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-        "answer":"1",
-        "prize": {
-            "sand":0,
-            "powred":1,
-            "wick":1},
-        "x": -1,
-        "y": -1,
-        "div":"",
-        "room":0});
-    VARRIORS_GLOBAL.push(
-        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-        "answer":"1",
-        "prize": {
-            "sand":1,
-            "powred":1,
-            "wick":0},
-        "x": -1,
-        "y": -1,
-        "div":"",
-        "room":0});
-    VARRIORS_GLOBAL.push(
-        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-        "answer":"1",
-        "prize": {
-            "sand":0,
-            "powred":0,
-            "wick":0},
-        "x": -1,
-        "y": -1,
-        "div":"",
-        "room":0});
-    VARRIORS_GLOBAL.push(
-        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-        "answer":"1",
-        "prize": {
-            "sand":1,
-            "powred":1,
-            "wick":1},
-        "x": -1,
-        "y": -1,
-        "div":"",
-        "room":0});
-    VARRIORS_GLOBAL.push(
-        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-        "answer":"1",
-        "prize": {
-            "sand":0,
-            "powred":1,
-            "wick":0},
-        "x": -1,
-        "y": -1,
-        "div":"",
-        "room":0});
-    VARRIORS_GLOBAL.push(
-        {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-        "answer":"1",
-        "prize": {
-            "sand":2,
-            "powred":0,
-            "wick":0},
-        "x": -1,
-        "y": -1,
-        "div":"",
-        "room":0});
-
-
-    //#endregion
-
+    },
+    
+    SAND = [],
+    WICK = [],
+    POWRED = [],
+    SAND_IN = [],
+    WICK_IN = [],
+    POWRED_IN = [];
 
     //Скрытие pop-container при клике за область экрана.
     $("#pop-container-info").bind("click", function (e) {
         if ($(e.target).attr("id") == "pop-container-info")
+            closeWindow();
+    })
+
+    $("#pop-container-get").bind("click", function (e) {
+        if ($(e.target).attr("id") == "pop-container-get")
             closeWindow();
     })
 
@@ -790,14 +870,155 @@ $(document).ready(function () {
     
     $("#count-item-torch").text(torchs);
 
+
+//#region VARRIORS init
+
+VARRIORS_GLOBAL.push(
+    {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+    "answer":"1",
+    "prize": {
+        "sand":1,
+        "powred":0,
+        "wick":0},
+    "x": -1,
+    "y": -1,
+    "div":"",
+    "room":0});
+VARRIORS_GLOBAL.push(
+    {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+    "answer":"1",
+    "prize": {
+        "sand":0,
+        "powred":1,
+        "wick":0},
+    "x": -1,
+    "y": -1,
+    "div":"",
+    "room":0});
+VARRIORS_GLOBAL.push(
+    {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+    "answer":"1",
+    "prize": {
+        "sand":0,
+        "powred":0,
+        "wick":1},
+    "x": -1,
+    "y": -1,
+    "div":"",
+    "room":0});
+VARRIORS_GLOBAL.push(
+    {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+    "answer":"1",
+    "prize": {
+        "sand":1,
+        "powred":0,
+        "wick":1},
+    "x": -1,
+    "y": -1,
+    "div":"",
+    "room":0});
+VARRIORS_GLOBAL.push(
+    {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+    "answer":"1",
+    "prize": {
+        "sand":0,
+        "powred":1,
+        "wick":1},
+    "x": -1,
+    "y": -1,
+    "div":"",
+    "room":0});
+VARRIORS_GLOBAL.push(
+    {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+    "answer":"1",
+    "prize": {
+        "sand":1,
+        "powred":1,
+        "wick":0},
+    "x": -1,
+    "y": -1,
+    "div":"",
+    "room":0});
+VARRIORS_GLOBAL.push(
+    {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+    "answer":"1",
+    "prize": {
+        "sand":0,
+        "powred":0,
+        "wick":0},
+    "x": -1,
+    "y": -1,
+    "div":"",
+    "room":0});
+VARRIORS_GLOBAL.push(
+    {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+    "answer":"1",
+    "prize": {
+        "sand":1,
+        "powred":1,
+        "wick":1},
+    "x": -1,
+    "y": -1,
+    "div":"",
+    "room":0});
+VARRIORS_GLOBAL.push(
+    {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+    "answer":"1",
+    "prize": {
+        "sand":0,
+        "powred":1,
+        "wick":0},
+    "x": -1,
+    "y": -1,
+    "div":"",
+    "room":0});
+VARRIORS_GLOBAL.push(
+    {"taks":"Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
+    "answer":"1",
+    "prize": {
+        "sand":2,
+        "powred":0,
+        "wick":0},
+    "x": -1,
+    "y": -1,
+    "div":"",
+    "room":0});
+
+
+//#endregion
+
+
     for (let i in [1, 1, 1, 1, 1])
         addVarrior();
 
+//#region RESOURSE init 
+    addResourse("sand", "1. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("sand", "2. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("sand", "3. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("sand", "4. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("sand", "5. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("sand", "6. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("sand", "7. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
     
-
+    addResourse("wick", "11. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("wick", "12. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("wick", "13. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("wick", "14. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("wick", "15. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("wick", "16. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("wick", "17. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
     
-
-    // console.log(VARRIORS_CURRENT)        
+    addResourse("powred", "21. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("powred", "22. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("powred", "23. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("powred", "24. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("powred", "25. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("powred", "26. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("powred", "27. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    
+//#endregion
+    
+// console.log(VARRIORS_CURRENT)        
 });
 
 
