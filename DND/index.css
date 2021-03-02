@@ -118,7 +118,7 @@
     border: none;
     color: #CCAC7F;
     cursor: pointer;
-    padding: 10px 0px;
+    padding: 5px 0px;
 }
 
 .wrapper-img {
@@ -255,6 +255,13 @@
     opacity: 0;
     position: absolute;
     background: rgb(26, 22, 22);
+}
+
+.tnt {
+    z-index: 10;
+    opacity: 1;
+    position: absolute;
+    background: white; 
 }
 
 

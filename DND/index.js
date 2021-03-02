@@ -41,7 +41,7 @@ $(document).ready(function () {
         $("#circle2").css({left: (heroX * size + deltaX) / x, top: (heroY * size + deltaY) / x});
     }    
 
-    function interfaceMoveOut(event) {
+    function interfaceMoveOut() {
         let interfase = $("#interface"),
             flag = interfase.css("display") == "none" ? false : true;
         if (flag) {
@@ -299,6 +299,25 @@ $(document).ready(function () {
         heroY = y;
     }
 
+    function checkTorchs(){
+        for (let i in lamps){
+            for (let s = 0; s < SAND.length; s++){                
+                if (Math.sqrt((SAND[s]["x"] - lamps[i][2]) * (SAND[s]["x"] - lamps[i][2]) + (SAND[s]["y"] - lamps[i][3]) * (SAND[s]["y"] - lamps[i][3])) <= 7) 
+                    SAND[s]["div"].style.opacity = 1;
+            }
+            for (let s = 0; s < WICK.length; s++){                
+                if (Math.sqrt((WICK[s]["x"] - lamps[i][2]) * (WICK[s]["x"] - lamps[i][2]) + (WICK[s]["y"] - lamps[i][3]) * (WICK[s]["y"] - lamps[i][3])) <= 7) 
+                    WICK[s]["div"].style.opacity = 1;
+            }
+            for (let s = 0; s < POWRED.length; s++){                
+                if (Math.sqrt((POWRED[s]["x"] - lamps[i][2]) * (POWRED[s]["x"] - lamps[i][2]) + (POWRED[s]["y"] - lamps[i][3]) * (POWRED[s]["y"] - lamps[i][3])) <= 7) {
+                    POWRED[s]["div"].style.opacity = 1;
+                    // console.log(POWRED[s]["div"]);
+                }
+            }
+        }
+    }
+
     function checkKey(e) {
         // console.log(e.keyCode);
 
@@ -308,9 +327,15 @@ $(document).ready(function () {
         if(PENDING)
             return null;
 
-        if(e.keyCode == 67)
+        if(e.keyCode == 67){
             clearAll();
+            return null;            
+        }
 
+        if(e.keyCode == 86){
+            interfaceMoveOut();
+            return null;            
+        }        
 
         if (e.keyCode == '90') {            
             putTorch();
@@ -350,7 +375,7 @@ $(document).ready(function () {
                 if (behind <= 5)
                     VARRIORS_CURRENT[i]["div"].style.opacity = (5 - behind) / 5
                 else 
-                    VARRIORS_CURRENT[i]["div"].style.opacity = 0;
+                    VARRIORS_CURRENT[i]["div"].style.opacity = 0;                
 
                 if (behind <= 3){
                     attack(VARRIORS_CURRENT[i]);
@@ -364,6 +389,9 @@ $(document).ready(function () {
                     SAND[i]["div"].style.opacity = (7 - sandX) / 7;
                 else 
                     SAND[i]["div"].style.opacity = 0;
+                
+                    
+                checkTorchs();
 
                 if (sandX  == 0){
                     getResourse(SAND[i]);
@@ -378,6 +406,8 @@ $(document).ready(function () {
                 else 
                     WICK[i]["div"].style.opacity = 0;
 
+                checkTorchs();
+
                 if (wickX  == 0){
                     getResourse(WICK[i]);
                     break;
@@ -390,6 +420,8 @@ $(document).ready(function () {
                     POWRED[i]["div"].style.opacity = (7 - powredX) / 7;
                 else 
                     POWRED[i]["div"].style.opacity = 0;
+
+                checkTorchs();
 
                 if (powredX  == 0){
                     getResourse(POWRED[i]);
@@ -416,7 +448,8 @@ $(document).ready(function () {
     }
 
     function putTorch(){
-        if (room != 0 && !(room in lamps) && torchs > 0){
+        // console.log(room);
+        if (room > 0 && !(room in lamps) && torchs > 0){
             torchs --;
             var lamp1 = $("#circle").clone(),
                 lamp2 = $("#circle2").clone();
@@ -782,25 +815,43 @@ $(document).ready(function () {
         }
     }
 
-    // враг подошёл -> 2 кнопки - сбежать и убить
-    // храним массив путей
-    // храним общий массив мобов (без х, у) и текущий {
-    // х, у, задача, ответ чтобы убить, награда за убийство
-    // }
-    // мут - лишение факелов, перенос в начало, отбирание всего инвентаря 
+    function putTNT(){
+        if(TNT > 0 && (!(room in TNTS) && ROOMS_WITH_TNT > 0 || room in TNTS)){
+            for (let i in TNTS){
+                for (let j = 0; j < TNTS[i].length; j++)
+                    if (TNTS[i][j][1] == heroX && TNTS[i][j][2] == heroY)
+                        return null;
+            }
 
-    
-    // мы подошли к ресурсу -> 1 поле и 1 кнопка - ввод и проверить
-    // храним массив ресурсов {
-    // x, y, что даёт, задача, правильный ответ, решено или нет
-    // }
-    // 
+            TNT --;
 
-    // мы подошли к точке получения информации -> 
-    // получить информацию о лабиринте, телепортироваться
-    // храним массив точек {
-    // х, у, куда телепортируется, информация, правильный ответ
-    // }
+            let div = document.createElement("div");
+            div.className = "tnt";
+            div.style.left = heroX * size + "px";
+            div.style.top = heroY * size + "px";
+            div.style.height = size + "px";
+            div.style.width = size + "px";
+            div.id = "tnt_" + heroX + "_" + heroY;
+            $("#tnts").append(div);
+
+
+            if (room in TNTS){
+                TNTS[room].push([div, heroX, heroY]);
+            }
+            else {
+                ROOMS_WITH_TNT --;
+                TNTS[room] = [[div, heroX, heroY]];
+            }
+
+            $("#count-item-room").text(ROOMS_WITH_TNT);
+            $("#count-item-tnt").text(TNT);
+            
+        }
+    }
+
+    function getTNT(){
+
+    }    
 
     var heroX = 1,
     heroY = 21,
@@ -854,6 +905,40 @@ $(document).ready(function () {
     "27. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
     "28. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae."],
     
+    TNTS = {};
+
+    ROOMS_WITH_TNT = 3;
+
+    //     "1":[4, 4],
+    //     "2":[13, 14],
+    //     "3":[18, 6],
+    //     "4":[40, 6],
+    //     "5":[21, 19],
+    //     "6":[35, 11],
+    //     "7":[40, 13],
+    //     "8":[37, 25],
+    //     "9":[27, 30],
+    //     "10":[21, 8],
+    //     "11":[11, 35],
+    //     "12":[8, 41],
+    //     "13":[],
+    //     "14":[],
+    //     "15":[],
+    //     "16":[],
+    //     "17":[],
+    //     "18":[],
+    //     "19":[],
+    //     "20":[],
+    //     "21":[],
+    //     "22":[],
+    //     "23":[],
+    //     "24":[],
+    //     "25":[],
+    //     "26":[],
+    //     "27":[],
+    //     "28":[]
+    // },
+
     MONSTER_ATTACK = "МОНСТР АТАКУЕТ ТЕБЯ",
     TIME_TO_KILL = 60,
     
@@ -870,7 +955,7 @@ $(document).ready(function () {
     WICK_IN = [],
     POWRED_IN = [],
     
-    TNT = 0;
+    TNT = 10;
 
     //Скрытие pop-container при клике за область экрана.
     $("#pop-container-info").bind("click", function (e) {
@@ -889,8 +974,8 @@ $(document).ready(function () {
     // })
 
     $("#button-interface").click(
-        function (e) {
-            interfaceMoveOut(e);
+        function () {
+            interfaceMoveOut();
         }
     );
 
@@ -913,8 +998,14 @@ $(document).ready(function () {
     $("#clearAll").click(clearAll);
 
     $("#craftTNT").click(craftTNT);
+
+    $("#getTNT").click(getTNT);
+
+    $("#putTNT").click(putTNT);
     
+
     $("#count-item-torch").text(torchs);
+    $("#count-item-tnt").text(TNT);
 
 
 //#region VARRIORS init
