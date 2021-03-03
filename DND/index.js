@@ -262,7 +262,7 @@ $(document).ready(function () {
         $("#hero").animate({
             top: size * heroY + deltaY,
             left: size * heroX + deltaX
-        }, 100);
+        }, SPEED);
 
         let x = size * heroX + deltaX < ($(window).width() - 125 / (window.defaultWidth / window.innerWidth).toFixed(2)) ?
             size * heroX + deltaX : ($(window).width() - 125 / (window.defaultWidth / window.innerWidth).toFixed(2)),
@@ -273,12 +273,12 @@ $(document).ready(function () {
         $("#circle").animate({
             left: x,
             top: y
-        }, 100);
+        }, SPEED);
 
         $("#circle2").animate({
             left: x,
             top: y
-        }, 100);
+        }, SPEED);
 
        
         MOVES_5[2] = MOVES_5[1];
@@ -377,14 +377,40 @@ $(document).ready(function () {
             return null;         
         }
 
-
-        if (!onkeypressDown)
-            return null;
-
-        else {
-            onkeypressDown = false;
-            onkeypressUp = true;
+        if (e.keyCode == '66') {
+            BANG();  
+            return null;         
         }
+
+        if (e.keyCode == '78') {
+            UNBANG();  
+            return null;         
+        }
+
+        if (e.keyCode == '188') {
+            SPEED = 100;
+            return null;         
+        }
+
+        if (e.keyCode == '190') {
+            SPEED = 0;
+            return null;         
+        }
+
+        
+        // console.log($("#hero").position().left);
+        if (e.keyCode == '38' && map[heroY - 1][heroX] == -1 || e.keyCode == '40' && map[heroY + 1][heroX] == -1 || e.keyCode == '37' && map[heroY][heroX - 1] == -1 ||  e.keyCode == '39' && map[heroY][heroX + 1] == -1 || heroX == 0 && e.keyCode == '37') {
+            return null;
+        } 
+
+
+        // if (!onkeypressDown)
+        //     return null;
+
+        // else {
+        //     onkeypressDown = false;
+        //     onkeypressUp = true;
+        // }
 
         e = e || window.event;
         map[heroY][heroX] = room;
@@ -908,10 +934,14 @@ $(document).ready(function () {
         let tnts = []
         for (let i in TNTS){
             for (let j = 0; j < TNTS[i].length; j++){
-                TNTS[i][j].push(i);
+                // TNTS[i][j].push(i);
                 tnts.push(TNTS[i][j]);
             }
         }
+
+        if (tnts.length == 0 || BOOM != null)
+            return null;
+
         CURRENT_TIME_TO_GONE = TIME_TO_GONE;
         let x = 0;
         prepare = setInterval(() => {
@@ -935,7 +965,13 @@ $(document).ready(function () {
 
         BOOM = setTimeout(() => {
             clearInterval(prepare);
-            destroyAll();
+            tnts = 0
+            for (let i in TNTS){
+                tnts += TNTS[i].length;
+            }
+            if (tnts != 0)
+                destroyAll();
+
         }, TIME_TO_GONE * 1000);
     }
 
@@ -974,9 +1010,11 @@ $(document).ready(function () {
     function UNBANG(){
         if (typeof(BOOM) != "undefined" && BOOM !== null){
             clearTimeout(BOOM);
+            BOOM = null;
         }
         if (typeof(prepare) != "undefined" && prepare !== null){
             clearInterval(prepare);
+            prepare = null;
         }        
     }
 
@@ -987,7 +1025,7 @@ $(document).ready(function () {
     size = $(window).width() / 108,
     deltaX = size / 4,
     deltaY = size / 2 - size * 2,
-    room = -1,
+    room = -10,
     inroom = false,
     onkeypressUp = false,
     onkeypressDown = true,
@@ -1006,6 +1044,7 @@ $(document).ready(function () {
     CURRENT_TIME_TO_GONE = 0;
     BOOM = null,
     prepare = null,
+    SPEED = 100;
 
     ROOMS = ["1. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
     "2. Будьте начеку... Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia, molestiae.",
@@ -1324,6 +1363,8 @@ VARRIORS_GLOBAL.push(
     map[20][2] = -10;
     map[20][3] = -10;
     map[20][4] = -10;
+
+    
     
     localStorage.result = "null";
 
