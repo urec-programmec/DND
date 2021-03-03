@@ -133,7 +133,8 @@ $(document).ready(function () {
         text.type = "text";
         text.id = "text_get";
         text.className = "textblock";
-        text.placeholder = "Хочешь яблочко - сруби яблоню.";
+        // text.placeholder = "Хочешь яблочко - сруби яблоню.";
+        text.placeholder = "...твой правильный ответ...";
         actions.append(text);
 
         let button = document.createElement("button");
@@ -552,6 +553,7 @@ $(document).ready(function () {
 
     function clearAll(){
         if (SHOWINFO.length != 0){
+            $("#clearAll").text("Покажи всё!");
             SHOWINFO = [];
             eventInfo({
                 "main": {
@@ -560,6 +562,20 @@ $(document).ready(function () {
                 },
                 "buttons": [{
                     "text": "Окей...",
+                    "func": closeWindow
+                }]
+            });
+        }
+        else {
+            $("#clearAll").text("Не показывай ничего!");
+            SHOWINFO = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28];
+            eventInfo({
+                "main": {
+                    "head": "Wooooooooooooooow!",
+                    "main":"Ты что, прозрел и хочешь знать правду об этом мире?",
+                },
+                "buttons": [{
+                    "text": "...конечно...",
                     "func": closeWindow
                 }]
             });
