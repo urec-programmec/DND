@@ -970,7 +970,7 @@ $(document).ready(function () {
     VARRIORS_IN = [],
     countTrys = 5,
     MOVES_5 = [[heroX, heroY], [heroX, heroY], [heroX, heroY]],
-    TIME_TO_GONE = 3,
+    TIME_TO_GONE = 10,
     BOOM = null,
     prepare = null,
 
