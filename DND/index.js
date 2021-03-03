@@ -605,7 +605,8 @@ $(document).ready(function () {
             "prize":{
                 "sand":0,
                 "powred":0,
-                "wick":0},
+                "wick":0,
+                "tnt":0},
             "x":xVar,
             "y":yVar,
             "div":"",
@@ -892,7 +893,8 @@ $(document).ready(function () {
                 tnts.push(TNTS[i][j]);
             }
         }
-        let count = TIME_TO_GONE * 2;
+        CURRENT_TIME_TO_GONE = TIME_TO_GONE;
+        let x = 0;
         prepare = setInterval(() => {
             for (let i = 0; i < tnts.length; i++){
                 if (Math.random() >= 0.5){
@@ -902,7 +904,14 @@ $(document).ready(function () {
                     tnts[i][0].style.backgroundColor = "white";
                 }
             }
-            count --;
+            if (x == 0){
+                CURRENT_TIME_TO_GONE --;
+                x = 1;
+            }
+            else {
+                x = 0;
+            }
+            
         }, 500);
 
         BOOM = setTimeout(() => {
@@ -971,6 +980,7 @@ $(document).ready(function () {
     countTrys = 5,
     MOVES_5 = [[heroX, heroY], [heroX, heroY], [heroX, heroY]],
     TIME_TO_GONE = 10,
+    CURRENT_TIME_TO_GONE = 0;
     BOOM = null,
     prepare = null,
 
