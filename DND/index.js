@@ -378,7 +378,9 @@ $(document).ready(function () {
             return null;         
         }
 
-        if (e.keyCode == '38' && map[heroY - 1][heroX] == -1 || e.keyCode == '40' && map[heroY + 1][heroX] == -1 || e.keyCode == '37' && map[heroY][heroX - 1] == -1 ||  e.keyCode == '39' && map[heroY][heroX + 1] == -1) {
+        
+        // console.log($("#hero").position().left);
+        if (e.keyCode == '38' && map[heroY - 1][heroX] == -1 || e.keyCode == '40' && map[heroY + 1][heroX] == -1 || e.keyCode == '37' && map[heroY][heroX - 1] == -1 ||  e.keyCode == '39' && map[heroY][heroX + 1] == -1 || heroX == 0 && e.keyCode == '37') {
             return null;
         } 
 
@@ -1004,7 +1006,7 @@ $(document).ready(function () {
     size = $(window).width() / 108,
     deltaX = size / 4,
     deltaY = size / 2 - size * 2,
-    room = -1,
+    room = -10,
     inroom = false,
     onkeypressUp = false,
     onkeypressDown = true,
@@ -1334,6 +1336,8 @@ VARRIORS_GLOBAL.push(
     map[20][2] = -10;
     map[20][3] = -10;
     map[20][4] = -10;
+
+    
     
     localStorage.result = "null";
 
