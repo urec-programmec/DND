@@ -861,7 +861,7 @@ $(document).ready(function () {
                 TNTS[room] = [[div, heroX, heroY]];
             }
 
-            $("#count-item-room").text(ROOMS_WITH_TNT);
+            // $("#count-item-room").text(ROOMS_WITH_TNT);
             $("#count-item-tnt").text(TNT);
             
         }
@@ -880,7 +880,7 @@ $(document).ready(function () {
             else
             TNTS[room].splice(TNTS[room].length - 1, 1);
 
-            $("#count-item-room").text(ROOMS_WITH_TNT);
+            // $("#count-item-room").text(ROOMS_WITH_TNT);
             $("#count-item-tnt").text(TNT);
         }
     }    
@@ -925,11 +925,15 @@ $(document).ready(function () {
 
         let result = 0;
 
-        for (let i in TNTS){
-            result += TNTS[i].length;
-        }
+        for (let i in TNTS)
+            result += TNTS[i].length * ROOM_MEAN[i];
 
-        localStorage.result = result;
+        if (room != -10)
+            result -= 10;
+
+        if (localStorage.result == "null")
+            localStorage.result = result;
+
         document.getElementById("videoPlayer").style.zIndex = "200";
         $("#videoPlayer").animate({opacity:'1'},700);
         document.getElementById("videoPlayer").play();
@@ -1015,7 +1019,7 @@ $(document).ready(function () {
     
     TNTS = {};
 
-    ROOMS_WITH_TNT = 3;
+    ROOMS_WITH_TNT = 28;
 
     MONSTER_ATTACK = "МОНСТР АТАКУЕТ ТЕБЯ",
     TIME_TO_KILL = 60,
@@ -1024,6 +1028,37 @@ $(document).ready(function () {
         "sand":0,
         "powred":0,
         "wick":0
+    },
+
+    ROOM_MEAN = {
+        1:4,
+        2:5,
+        3:4,
+        4:4,
+        5:6,
+        6:5,
+        7:4,
+        8:5,
+        9:6,
+        10:5,
+        11:6,
+        12:5,
+        13:6,
+        14:5,
+        15:4,
+        16:4,
+        17:7,
+        18:3,
+        19:2,
+        20:3,
+        21:1,
+        22:2,
+        23:3,
+        24:3,
+        25:4,
+        26:5,			
+        27:7,
+        28:2
     },
     
     SAND = [],
@@ -1263,7 +1298,7 @@ VARRIORS_GLOBAL.push(
     map[20][3] = -10;
     map[20][4] = -10;
     
-    
+    localStorage.result = "null";
 
 // console.log(VARRIORS_CURRENT)        
 });
