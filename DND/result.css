@@ -1,0 +1,40 @@
+body {
+    /* position: absolute; */
+    height: 100%;
+    width: 100%;
+    background: #331C00;
+    justify-content: space-evenly;
+    justify-items: center;
+    flex-direction: column;
+
+}
+
+#result{
+    width: 50%;
+    height: 50%;
+    margin: 0px auto;
+    font-family: 'Underdog', cursive;
+    font-size: large;
+    background-image: url("source/wood.jpg");
+    border: none;
+    color: #CCAC7F;
+        
+    vertical-align: middle; 
+    
+    max-width: none;
+    min-width: auto;
+    min-height: auto;
+    position: absolute;    
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 5px 0px;
+}
+
+#result p {
+    position: absolute;
+    top: 50%;                
+    left: 50%;         
+    transform: translate(-50%, -50%);
+    /* text-align: center; */
+}

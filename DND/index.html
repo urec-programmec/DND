@@ -58,7 +58,7 @@
             </div>
             
         </div>
-        <button class="interface-button-action" id="craftTNT">Крафтить динамит!</button>
+        <!-- <button class="interface-button-action" id="craftTNT">Крафтить динамит!</button>
         <button class="interface-button-action" id="putTNT">Заложить динамит! (+)</button>
         <button class="interface-button-action" id="getTNT">Забрать динамит! (-)</button>        
         <hr>
@@ -67,7 +67,35 @@
         <hr>
         <button class="interface-button-action" id="sayAbout">Расскажи про комнату!</button>
         <button class="interface-button-action" id="clearAll">Не показывай ничего!</button>
+        <hr>         -->
+        <button class="interface-button-action" id="BANG">Взорвать (уберу потом в скрытые)</button>
+        <button class="interface-button-action" id="UNBANG">Отменить взрыв (уберу потом в скрытые)</button>
+        
     </div>
+
+    <div id="interface2">
+        <div id="interface-info">            
+            <div class="items-for-use">
+                <div class="wrapper-item">                    
+                    <p>ВСЕЛЕНСКАЯ СПРАВКА</p>
+                </div>
+                <div class="wrapper-item">
+                    <p>Навигация:</p>
+                    <p></p>
+                    <p>ecs - закрыть модальное окно</p>
+                    <p>z - установить факел в комнату (в комнате только 1 факел)</p>
+                    <p>x - забрать факел из комнаты</p>
+                    <p>с - выключить показ окон при входе в комнаты (отдельно по каждой - см. в инвентаре)</p>
+                    <p>v - открыть / закрыть инвентарь</p>
+                    <p>пробел - установить динамит в комнату (на разных клетках)</p>
+                    <p>backspace - забрать динамит из комнаты (последний)</p>
+                </div>                
+            </div>            
+        </div>
+        <div id="buttons-hide">            
+        </div>
+    </div>
+
     <img src="source/fone2.jpg" class="img">
     <div id="circle" class="lamp1"></div>
     <div id="circle2" class="lamp2"></div>
@@ -112,6 +140,11 @@
 <div id="powreds"></div>
 
 <div id="tnts"></div>
+
+
+<video id="videoPlayer" autoplay>
+    <source src="source/boom.mp4" type="video/mp4">    
+</video>
 
 <!-- <script src="window.js"></script>
 <script src="torch.js"></script> -->

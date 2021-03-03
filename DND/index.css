@@ -62,7 +62,7 @@
 
 /* Interface */
 
-#interface {
+#interface, #interface2 {
     position: absolute;
     height: 98%;
     width: 15%;
@@ -283,4 +283,18 @@ hr {
     background-color: #331C00;
     height: 2px;
     width: 100%;
+}
+
+#videoPlayer {
+    z-index: -1;
+    opacity: 0;
+    max-width: none;
+    min-width: auto;
+    min-height: auto;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
