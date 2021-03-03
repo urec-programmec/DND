@@ -60,6 +60,25 @@ $(document).ready(function () {
         }
     }
 
+    function interfaceMoveOut2() {
+        let interfase = $("#interface2"),
+            flag = interfase.css("display") == "none" ? false : true;
+        if (flag) {
+            interfase.hide(1000);
+            $("#button-interface2").animate({
+                right: "6%",
+                top: "2%"
+            })
+        } else {
+            interfase.show("slow");
+            interfase.css("display", "flex");
+            $("#button-interface2").animate({
+                right: "0%",
+                top: "1.5%"
+            });
+        }
+    }
+
     function closeWindow(){
         PENDING = false;
         // what = "info";
@@ -1092,6 +1111,14 @@ $(document).ready(function () {
             interfaceMoveOut();
         }
     );
+
+    $("#button-interface2").click(
+        function () {
+            interfaceMoveOut2();
+        }
+    );
+
+
 
     //Скрытие pop-container при клике на крестик.
     $(".popup-container-close").click(() => {        
