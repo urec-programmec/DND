@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>DND</title>
     <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="shortcut icon" href="source/icon.png" type="image/png">
     <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
 </head>
 <body>
@@ -11,6 +12,10 @@
 
     <div id="button-interface">
         <img id="icon-button-interface" src="source/belt.png">
+    </div>
+
+    <div id="button-interface2">
+        <img id="icon-button-interface2" src="source/belt.png">
     </div>
 
     <div id="hero" class="hero"></div>
@@ -48,47 +53,41 @@
                         <img src="source/tnt.png">
                     </div>
                     X <p id="count-item-tnt">0</p>
-                </div>                
+                </div>
             </div>
-            
+
         </div>
         <button class="interface-button-action" id="craftTNT">Крафтить динамит!</button>
         <button class="interface-button-action" id="putTNT">Заложить динамит! (+)</button>
-        <button class="interface-button-action" id="getTNT">Забрать динамит! (-)</button>        
+        <button class="interface-button-action" id="getTNT">Забрать динамит! (-)</button>
         <hr>
         <button class="interface-button-action" id="putTorch">Выкинь факел!</button>
         <button class="interface-button-action" id="getTorch">Забери факел!</button>
         <hr>
         <button class="interface-button-action" id="sayAbout">Расскажи про комнату!</button>
         <button class="interface-button-action" id="clearAll">Не показывай ничего!</button>
-        <hr>        
-        <button class="interface-button-action" id="BANG">Взорвать (уберу потом в скрытые)</button>
-        <button class="interface-button-action" id="UNBANG">Отменить взрыв (уберу потом в скрытые)</button>
-        
+
     </div>
 
     <div id="interface2">
-        <div id="interface-info">            
-            <div class="items-for-use">
-                <div class="wrapper-item">                    
-                    <p>ВСЕЛЕНСКАЯ СПРАВКА</p>
-                </div>
-                <div class="wrapper-item">
-                    <p>Навигация:</p>
-                    <p></p>
-                    <p>ecs - закрыть модальное окно</p>
-                    <p>z - установить факел в комнату (в комнате только 1 факел)</p>
-                    <p>x - забрать факел из комнаты</p>
-                    <p>с - выключить показ окон при входе в комнаты (отдельно по каждой - см. в инвентаре)</p>
-                    <p>v - открыть / закрыть инвентарь</p>
-                    <p>пробел - установить динамит в комнату (на разных клетках)</p>
-                    <p>backspace - забрать динамит из комнаты (последний)</p>
-                </div>                
-            </div>            
+        <div id="interface-info2">
+            <p>Навигация:</p>
+            <ul>
+                <li>ECS - закрыть модальное окно</li>
+                <li>Z - установить факел в комнату (в комнате только 1 факел)</li>
+                <li>X - забрать факел из комнаты</li>
+                <li>C - выключить показ окон при входе в комнаты (отдельно по каждой - см. в инвентаре)</li>
+                <li>V - открыть / закрыть инвентарь</li>
+                <li>SPACE - установить динамит в комнату (на разных клетках)</li>
+                <li>BACKSPACE - забрать динамит из комнаты (последний)</li>
+            </ul>
         </div>
-        <div id="buttons-hide">            
-        </div>
+        <button class="interface-button-action" id="%%%1">Взорвать все</button>
+        <button class="interface-button-action" id="%%%2">Отменить взрыв</button>
+        <button class="interface-button-action" id="%%%3">Включить ускоренный режим</button>
+        <button class="interface-button-action" id="%%%4">Выключить ускоренный режим</button>
     </div>
+
 
     <img src="source/fone2.jpg" class="img">
     <div id="circle" class="lamp1"></div>
@@ -106,7 +105,7 @@
 </div>
 
 <div class="pop-container" id="pop-container-input">
-    <div class="pop-container-block-input">        
+    <div class="pop-container-block-input">
         <div id="pop-container-content-input">
             <div id="content-explanation-input"></div>
             <div id="content-actions-input"></div>
@@ -126,18 +125,13 @@
 </div>
 
 <div id="varriors"></div>
-
 <div id="sands"></div>
-
 <div id="wicks"></div>
-
 <div id="powreds"></div>
-
 <div id="tnts"></div>
 
-
 <video id="videoPlayer">
-    <source src="source/boom.mp4" type="video/mp4">    
+    <source src="source/boom.mp4" type="video/mp4">
 </video>
 
 <!-- <script src="window.js"></script>
