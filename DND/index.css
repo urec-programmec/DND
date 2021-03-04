@@ -81,7 +81,7 @@
     position: absolute;
     right: 0px;
     height: 98%;
-    width: 15%;
+    width: 20%;
     background: #331C00;
     border: #443724 solid 3px;
     z-index: 15;
@@ -184,7 +184,7 @@
     height: 100%;
 }
 
-.wrapper-item {
+.wrapper-item, .wrapper-item-2 {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -192,6 +192,10 @@
     color: #CCAC7F;
     margin: 10px auto;
     font-family: 'Underdog', cursive;
+}
+
+.wrapper-item-2 {
+    margin: 0px auto;
 }
 
 .items-for-craft {
@@ -315,6 +319,14 @@
     opacity: 1;
     position: absolute;
     background: center / contain no-repeat url("source/tnt.png");
+}
+
+.tnt1 {
+    background: center / contain no-repeat url("source/tnt.png");
+}
+
+.tnt2 {
+    background: center / contain no-repeat url("source/tnt2.png");
 }
 
 

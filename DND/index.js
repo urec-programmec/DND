@@ -376,15 +376,15 @@ $(document).ready(function () {
             return null;
         }
 
-        if (e.keyCode == '66') {
-            BANG();
-            return null;
-        }
+        // if (e.keyCode == '66') {
+        //     BANG();
+        //     return null;
+        // }
 
-        if (e.keyCode == '78') {
-            UNBANG();
-            return null;
-        }
+        // if (e.keyCode == '78') {
+        //     UNBANG();
+        //     return null;
+        // }
 
         if (e.keyCode == '188') {
             SPEED = 100;
@@ -396,6 +396,10 @@ $(document).ready(function () {
             return null;
         }
 
+        if (e.keyCode == '191') {
+            interfaceMoveOut2();
+            return null;
+        }
 
         // console.log($("#hero").position().left);
         if (e.keyCode == '38' && map[heroY - 1][heroX] == -1 || e.keyCode == '40' && map[heroY + 1][heroX] == -1 || e.keyCode == '37' && map[heroY][heroX - 1] == -1 || e.keyCode == '39' && map[heroY][heroX + 1] == -1 || heroX == 0 && e.keyCode == '37') {
@@ -428,12 +432,12 @@ $(document).ready(function () {
             for (let i = 0; i < VARRIORS_CURRENT.length; i++) {
 
                 behind = Math.sqrt((heroX - VARRIORS_CURRENT[i]["x"]) * (heroX - VARRIORS_CURRENT[i]["x"]) + (heroY - VARRIORS_CURRENT[i]["y"]) * (heroY - VARRIORS_CURRENT[i]["y"]));
-                if (behind <= 5)
-                    VARRIORS_CURRENT[i]["div"].style.opacity = (5 - behind) / 5
+                if (behind <= 6)
+                    VARRIORS_CURRENT[i]["div"].style.opacity = (6 - behind) / 6
                 else
                     VARRIORS_CURRENT[i]["div"].style.opacity = 0;
 
-                if (behind <= 3) {
+                if (behind <= 2.5) {
                     attack(VARRIORS_CURRENT[i]);
                     break;
                 }
@@ -497,7 +501,7 @@ $(document).ready(function () {
             } else if (room != 0 && (MOVE.length != 0 && MOVE[MOVE.length - 1] != room || MOVE.length == 0))
                 MOVE.push(room);
 
-            if (room in SHOWINFO && behind > 3 && sandX != 0 && wickX != 0 && powredX != 0)
+            if (room in SHOWINFO && behind > 2.5 && sandX != 0 && wickX != 0 && powredX != 0)
                 sayAbout();
         }
     }
@@ -574,7 +578,7 @@ $(document).ready(function () {
             eventInfo({
                 "main": {
                     "head": "XAXAXA",
-                    "main": "БОЛЬШЕ ТЫ НИЧЕГО НЕ УЗНАЕШЬ, ГЛУПЕЦ-ГОЛУБЕЦ!",
+                    "main": "БОЛЬШЕ ТЫ НИЧЕГО НЕ УЗНАЕШЬ, ГЛУПЕЦ-ГОЛУБЕЦ! (информация о комнатах больше не будет выводиться)",
                 },
                 "buttons": [{
                     "text": "Окей...",
@@ -588,7 +592,7 @@ $(document).ready(function () {
             eventInfo({
                 "main": {
                     "head": "Wooooooooooooooow!",
-                    "main":"Ты что, прозрел и хочешь знать правду об этом мире?",
+                    "main":"Ты что, прозрел и хочешь знать правду об этом мире? (информация о комнатах при входе снова показывается)",
                 },
                 "buttons": [{
                     "text": "...конечно...",
@@ -950,13 +954,20 @@ $(document).ready(function () {
         prepare = setInterval(() => {
             for (let i = 0; i < tnts.length; i++) {
                 if (Math.random() >= 0.5) {
-                    tnts[i][0].style.background = "red" //"center / contain no-repeat url(\"source/tnt2.png\")";
+                    tnts[i][0].classList.add("tnt1");
+                    // if ("tnt2" in tnts[i][0].classList)
+                    tnts[i][0].classList.remove("tnt2");                    
+                    // "source/tnt.png"; //"center / contain no-repeat url(\"source/tnt2.png\")";
                 } else {
-                    tnts[i][0].style.backgroundColor = "white" //"center / contain no-repeat url(\"source/tnt.png\")";
+                    tnts[i][0].classList.add("tnt2");
+                    // if ("tnt1" in tnts[i][0].classList)
+                    tnts[i][0].classList.remove("tnt1");
+                    // tnts[i][0].style.backgroundImage = "source/tnt2.png"; //"center / contain no-repeat url(\"source/tnt.png\")";
                 }
             }
             if (x == 0) {
                 CURRENT_TIME_TO_GONE--;
+                $("#count-item-time").text(CURRENT_TIME_TO_GONE);
                 x = 1;
             } else {
                 x = 0;
@@ -1012,6 +1023,8 @@ $(document).ready(function () {
         if (typeof (BOOM) != "undefined" && BOOM !== null) {
             clearTimeout(BOOM);
             BOOM = null;
+            CURRENT_TIME_TO_GONE = 0;
+            $("#count-item-time").text(CURRENT_TIME_TO_GONE);
         }
         if (typeof (prepare) != "undefined" && prepare !== null) {
             clearInterval(prepare);
@@ -1183,8 +1196,12 @@ $(document).ready(function () {
 
     $("#putTNT").click(putTNT);
 
-    $("#BANG").click(BANG);
-    $("#UNBANG").click(UNBANG);
+    $("#bang").click(BANG);
+    $("#unbang").click(UNBANG);
+
+    $("#speed").click(() => {SPEED = 100});
+    $("#xspeed").click(() => {SPEED = 0});
+
 
     $("#count-item-torch").text(torchs);
     $("#count-item-tnt").text(TNT);

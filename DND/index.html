@@ -69,23 +69,31 @@
 
     </div>
 
-    <div id="interface2">
+    <div id="interface2">        
         <div id="interface-info2">
+            <div class="items-for-craft">
+                <div class="wrapper-item-2">                
+                    До взрыва осталось <p id="count-item-time">0</p> секунд
+                </div>            
+            </div>
             <p>Навигация:</p>
             <ul>
-                <li>ECS - закрыть модальное окно</li>
-                <li>Z - установить факел в комнату (в комнате только 1 факел)</li>
-                <li>X - забрать факел из комнаты</li>
-                <li>C - выключить показ окон при входе в комнаты (отдельно по каждой - см. в инвентаре)</li>
+                <li>стрелки - перемещение на 1 клетку вправо / влево / вперед / назад</li>
+                <li>esc - закрывает любые окна (кроме монстров)</li>
+                <li>Z - поставить факел (только в комнате, всего 5 шт)</li>
+                <li>C - отключить / включить авто показ уведомлений при входе во всех комнатах</li>
                 <li>V - открыть / закрыть инвентарь</li>
-                <li>SPACE - установить динамит в комнату (на разных клетках)</li>
-                <li>BACKSPACE - забрать динамит из комнаты (последний)</li>
+                <li>&lt; - включить нормальный режим скорости перемещения</li>
+                <li>&gt; - включить ускоренный режим скорости перемещения</li>
+                <li>? (справа, рядом с shift) - открыть / закрыть справку</li>
+                <li>space - установить динамит (на клетку, в комнату)</li>
+                <li>backspace - удалить динамит (из комнаты)</li>
             </ul>
         </div>
-        <button class="interface-button-action" id="%%%1">Взорвать все</button>
-        <button class="interface-button-action" id="%%%2">Отменить взрыв</button>
-        <button class="interface-button-action" id="%%%3">Включить ускоренный режим</button>
-        <button class="interface-button-action" id="%%%4">Выключить ускоренный режим</button>
+        <button class="interface-button-action" id="bang">Взорвать все</button>
+        <button class="interface-button-action" id="unbang">Отменить взрыв</button>
+        <button class="interface-button-action" id="xspeed">Включить ускоренный режим</button>
+        <button class="interface-button-action" id="speed">Выключить ускоренный режим</button>
     </div>
 
 
