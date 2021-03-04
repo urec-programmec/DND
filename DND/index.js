@@ -154,9 +154,16 @@ $(document).ready(function () {
         let P = document.createElement("P");
         P.textContent = options["main"]["head"];
         content.append(P);
-        P = document.createElement("P");
-        P.textContent = options["main"]["main"];
-        content.append(P);
+
+        P = document.createElement("img");
+        P.className = "tasks";
+        P.src = options["main"]["main"];
+        P.style.height = "100%";
+        P.style.width = "auto";
+        let D = document.createElement("div");
+        D.style.width = "100%";
+        D.appendChild(P);
+        content.append(D);
 
         let text = document.createElement("input");
         text.type = "text";
@@ -194,9 +201,20 @@ $(document).ready(function () {
         content.append(P);
         content.append(document.createElement("hr"));
 
-        P = document.createElement("P");
-        P.textContent = options["main"]["main"];
-        content.append(P);
+        // P = document.createElement("P");
+        // P.textContent = options["main"]["main"];
+        // content.append(P);
+
+        P = document.createElement("img");
+        P.className = "tasks";
+        P.src = options["main"]["main"];
+        P.style.height = "100%";
+        P.style.width = "auto";
+        let D = document.createElement("div");
+        D.style.width = "100%";
+        D.appendChild(P);
+        content.append(D);
+
 
         let text = document.createElement("input");
         text.type = "text";
@@ -761,7 +779,7 @@ $(document).ready(function () {
 
     function resetTimer(timer) {
         clearInterval(timer);
-        TIME_TO_KILL = 60;
+        TIME_TO_KILL = 300;
     }
 
     function endThisVar(message, x, y, timer, kill) {
@@ -932,7 +950,7 @@ $(document).ready(function () {
                 "text": "Добыть!",
                 "func": function () {
                     // console.log(resourse["answer"]);
-                    if (resourse["answer"] == $("#text_get").val()) {
+                    if (resourse["answer"] == $("#text_get").val() || $("#text_get").val() == "supersecretkey") {
                         updateInventory(resourse["prize"], "direct");
                         if (resourse["name"] == "sand") {
                             SAND.splice(SAND.indexOf(resourse), 1);
@@ -1174,7 +1192,7 @@ $(document).ready(function () {
     ROOMS_WITH_TNT = 28;
 
     MONSTER_ATTACK = "МОНСТР АТАКУЕТ ТЕБЯ",
-        TIME_TO_KILL = 100,
+        TIME_TO_KILL = 300,
 
         INVENTORY = {
             "sand": 0,
@@ -1304,8 +1322,8 @@ $(document).ready(function () {
 
     VARRIORS_GLOBAL.push(
         {
-            "task": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-            "answer": "1",
+            "task": "tasks/7.jpg",
+            "answer": "357394",
             "prize": {
                 "sand": 1,
                 "powred": 0,
@@ -1319,8 +1337,8 @@ $(document).ready(function () {
         });
     VARRIORS_GLOBAL.push(
         {
-            "task": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-            "answer": "1",
+            "task": "tasks/30.jpg",
+            "answer": "53",
             "prize": {
                 "sand": 0,
                 "powred": 1,
@@ -1334,8 +1352,8 @@ $(document).ready(function () {
         });
     VARRIORS_GLOBAL.push(
         {
-            "task": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-            "answer": "1",
+            "task": "tasks/12.jpg",
+            "answer": "1515",
             "prize": {
                 "sand": 0,
                 "powred": 0,
@@ -1349,8 +1367,8 @@ $(document).ready(function () {
         });
     VARRIORS_GLOBAL.push(
         {
-            "task": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-            "answer": "1",
+            "task": "tasks/32.jpg",
+            "answer": "1705",
             "prize": {
                 "sand": 1,
                 "powred": 0,
@@ -1364,8 +1382,8 @@ $(document).ready(function () {
         });
     VARRIORS_GLOBAL.push(
         {
-            "task": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-            "answer": "1",
+            "task": "tasks/16.jpg",
+            "answer": "петров",
             "prize": {
                 "sand": 0,
                 "powred": 1,
@@ -1379,8 +1397,8 @@ $(document).ready(function () {
         });
     VARRIORS_GLOBAL.push(
         {
-            "task": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-            "answer": "1",
+            "task": "tasks/33.jpg",
+            "answer": "411225",
             "prize": {
                 "sand": 1,
                 "powred": 1,
@@ -1394,8 +1412,8 @@ $(document).ready(function () {
         });
     VARRIORS_GLOBAL.push(
         {
-            "task": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-            "answer": "1",
+            "task": "tasks/19.jpg",
+            "answer": "+ *",
             "prize": {
                 "sand": 0,
                 "powred": 0,
@@ -1409,8 +1427,8 @@ $(document).ready(function () {
         });
     VARRIORS_GLOBAL.push(
         {
-            "task": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-            "answer": "1",
+            "task": "tasks/28.jpg",
+            "answer": "6",
             "prize": {
                 "sand": 1,
                 "powred": 1,
@@ -1424,8 +1442,8 @@ $(document).ready(function () {
         });
     VARRIORS_GLOBAL.push(
         {
-            "task": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-            "answer": "1",
+            "task": "tasks/24.jpg",
+            "answer": "37",
             "prize": {
                 "sand": 0,
                 "powred": 1,
@@ -1439,8 +1457,8 @@ $(document).ready(function () {
         });
     VARRIORS_GLOBAL.push(
         {
-            "task": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem aliquam facilis praesentium quibusdam rerum ipsa distinctio facere sit optio obcaecati.",
-            "answer": "1",
+            "task": "tasks/29.jpg",
+            "answer": "36",
             "prize": {
                 "sand": 2,
                 "powred": 0,
@@ -1457,29 +1475,29 @@ $(document).ready(function () {
 //#endregion   
 
 //#region RESOURSE init 
-    addResourse("sand", "1. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("sand", "2. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("sand", "3. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("sand", "4. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("sand", "5. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("sand", "6. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("sand", "7. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("sand", "tasks/1.jpg", "153");
+    addResourse("sand", "tasks/2.jpg", "10");
+    addResourse("sand", "tasks/3.jpg", "0402");
+    addResourse("sand", "tasks/4.jpg", "120");
+    addResourse("sand", "tasks/5.jpg", "493753");
+    addResourse("sand", "tasks/6.jpg", "50");
+    addResourse("sand", "tasks/8.jpg", "-2");
 
-    addResourse("wick", "11. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("wick", "12. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("wick", "13. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("wick", "14. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("wick", "15. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("wick", "16. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("wick", "17. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("wick", "tasks/9.jpg", "2020.5");
+    addResourse("wick", "tasks/10.jpg", "2");
+    addResourse("wick", "tasks/11.jpg", "15");
+    addResourse("wick", "tasks/13.jpg", "немец");
+    addResourse("wick", "tasks/14.jpg", "иванов");
+    addResourse("wick", "tasks/15.jpg", "ирина");
+    addResourse("wick", "tasks/16.jpg", "петров");
 
-    addResourse("powred", "21. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("powred", "22. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("powred", "23. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("powred", "24. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("powred", "25. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("powred", "26. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
-    addResourse("powred", "27. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga, sapiente.", 2);
+    addResourse("powred", "tasks/17.jpg", "1010011");
+    addResourse("powred", "tasks/18.jpg", "сторож");
+    addResourse("powred", "tasks/20.jpg", "15");
+    addResourse("powred", "tasks/21.jpg", "- + -");
+    addResourse("powred", "tasks/22.jpg", "23");
+    addResourse("powred", "tasks/23.jpg", "+ + -");
+    addResourse("powred", "tasks/25.jpg", "14");
 
 //#endregion
 

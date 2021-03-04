@@ -185,6 +185,8 @@
     height: 50px;
 }
 
+
+
 .wrapper-img img {
     width: auto;
     height: 100%;
@@ -378,4 +380,8 @@ hr {
     background: center / contain no-repeat yellow;
     /* height: 10px;
     width: 10px; */
+}
+
+.tasks {
+
 }
