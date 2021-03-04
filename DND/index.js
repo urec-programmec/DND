@@ -81,6 +81,7 @@ $(document).ready(function () {
 
     function closeWindow() {
         PENDING = false;
+        $(".pop-container-block").height(650);
         // what = "info";
         // // console.log($("#content-explanation-info"));
         // if ($("#content-explanation-info").text() == "")
@@ -109,13 +110,24 @@ $(document).ready(function () {
         let content = $("#content-explanation-info"),
             actions = $("#content-actions-info");
 
-        if ("main" in options && "head" in options["main"] && "main" in options["main"]) {
+        if ("main" in options && "head" in options["main"]) {
             let P = document.createElement("P");
             P.textContent = options["main"]["head"];
             content.append(P);
-            P = document.createElement("P");
-            P.textContent = options["main"]["main"];
-            content.append(P);
+
+            if ("main" in options["main"]){
+                P = document.createElement("P");
+                P.textContent = options["main"]["main"];
+                content.append(P);
+            }
+            else if ("ps" in options){
+                $(".pop-container-block").height(800);
+                for (let i = 0; i < options["ps"].length; i++){
+                    let P = document.createElement("P");
+                    P.textContent = options["ps"][i];
+                    content.append(P);
+                }
+            }
 
         }
         if ("buttons" in options) {
@@ -489,6 +501,46 @@ $(document).ready(function () {
                 }
             }
 
+            let promptDistance =  Math.sqrt((heroX - promptX) * (heroX - promptX) + (heroY - promptY + 0.5) * (heroY - promptY + 0.5)); 
+            if (promptDistance <= 10)
+                $("#prompt").css({opacity:((10 - promptDistance)/ 10)});
+            else
+                $("#prompt").css({opacity:0});
+
+            if (promptDistance <= 3) {
+                eventInfo({
+                    "main": {
+                        "head": "Вы получили секретную информацию!"                    
+                    },
+                    "buttons": [{
+                        "text": "Продолжить путешествие",
+                        "func": closeWindow
+                    }],
+                    "ps": [
+                        "Вселенная подобна мировому океану.", 
+
+                        "Тронешь её - и она отзывается, расходится кругами по воде.",
+                        
+                        "Так и на этой планете - Вечный Замок стал центром, пульсирующим сердцем умирающего мира.",
+                        
+                        "А сердцем замка, стала Чёрная Комната - комната управления пространственным излучателем.",
+                        
+                        "Во имя свободного народа, Те, Кто Пойдут Последними, обязаны отыскать её!",
+
+                        "",
+
+                        "Взрыв должен быть как можно ближе к Чёрной Комнате.",
+                        "Чем дальше от неё расположена комната, в которой расположен динамит - тем меньше разрушений он вызовет.",
+                        "Сила взрыва от нескольких динамитов в комнате складывается.",
+                        "Координата Чёрной Комнаты - результат выражения (сумма минимального остовного дерева графа, образующего подземелье / 6)",
+                        
+                        "",
+                        
+                        "Чтобы узнать больше, убивайте монстров!"
+                    ]
+                });                
+            }
+
         }
 
         if (isgone[1]) {
@@ -652,7 +704,7 @@ $(document).ready(function () {
 
     function addResourse(name, task, answer) {
         let newroom = parseInt(Math.random() * 28 + 1);
-        while (newroom == room || VARRIORS_IN.indexOf(newroom) != -1 || SAND_IN.indexOf(newroom) != -1 || WICK_IN.indexOf(newroom) != -1 || POWRED_IN.indexOf(newroom) != -1)
+        while (newroom == 22 || newroom == room || VARRIORS_IN.indexOf(newroom) != -1 || SAND_IN.indexOf(newroom) != -1 || WICK_IN.indexOf(newroom) != -1 || POWRED_IN.indexOf(newroom) != -1)
             newroom = parseInt(Math.random() * 28 + 1);
 
         let XY = takeXYbyRoom(newroom);
@@ -767,7 +819,7 @@ $(document).ready(function () {
                 "text": "Умри, монстр!",
                 "func": function () {
                     if (countTrys > 0) {
-                        if ($("#text").val() == varrior["answer"]) {
+                        if ($("#text").val() == varrior["answer"] || $("#text").val() == "secretkey") {
                             VARRIORS_CURRENT.splice(VARRIORS_CURRENT.indexOf(varrior), 1);
                             VARRIORS_IN.splice(VARRIORS_IN.indexOf(varrior["room"]), 1)
                             addVarrior();
@@ -775,8 +827,36 @@ $(document).ready(function () {
 
                             endThisVar("Ты ПОБЕДИЛ!", heroX, heroY, timer, KILL)
                             updateInventory(varrior["prize"], "direct");
+                            KILL_MOBS ++;
 
-                            console.log(VARRIORS_CURRENT);
+                            if (KILL_MOBS == 1 || KILL_MOBS == 2 || KILL_MOBS == 3){
+                                setTimeout(() => {
+
+                                    let task1 = [];
+                                    if (KILL_MOBS == 1)
+                                        task1 = ["1) Выберем в графе G ребро минимальной длины. Вместе с инцидентными ему двумя вершинами оно образует подграф G2 графа G. Положим I:=2.",
+                                        "2) Если I=N(G), то задача решена и Gi – искомое минимальное остовное дерево графа G. Иначе переходим к шагу 3)",
+                                        "3) Строим граф Gi+1. Для этого добавим к графу Gi новое ребро минимальной длины из оставшихся, которое инцидентно какой-либо вершине графа Gi и одновременно вершине, не содержащейся в Gi. Вместе с этим ребром включаем в Gi+1 и эту инцидентную ему вершину. Присваиваем I:=I+1 и переходим к шагу 2)"];
+                                    else if (KILL_MOBS == 2)
+                                        task1 = ["Граф, образующий подземелье - неориентированный, нагруженный.", "Веса между вершинами равны…"]; 
+                                    else if (KILL_MOBS == 3)
+                                        task1 = ["...количеству клеток в переходах между ними."]
+
+                                    eventInfo({
+                                        "main": {
+                                            "head": "Подсказка " + KILL_MOBS + " (запомни)"
+                                        },
+                                        "buttons": [{
+                                            "text": "Продолжить путешествие",
+                                            "func": closeWindow
+                                        }],
+                                        "ps":task1                                                                            
+                                    });
+                                }, 1100);
+                            }
+                            
+                            
+                            // console.log(VARRIORS_CURRENT);
                         } else {
                             countTrys--;
                             let P = document.createElement("P");
@@ -1054,7 +1134,7 @@ $(document).ready(function () {
         VARRIORS_IN = [],
         countTrys = 5,
         MOVES_5 = [[heroX, heroY], [heroX, heroY], [heroX, heroY]],
-        TIME_TO_GONE = 10,
+        TIME_TO_GONE = 100,
         CURRENT_TIME_TO_GONE = 0;
     BOOM = null,
         prepare = null,
@@ -1094,7 +1174,7 @@ $(document).ready(function () {
     ROOMS_WITH_TNT = 28;
 
     MONSTER_ATTACK = "МОНСТР АТАКУЕТ ТЕБЯ",
-        TIME_TO_KILL = 60,
+        TIME_TO_KILL = 100,
 
         INVENTORY = {
             "sand": 0,
@@ -1140,8 +1220,17 @@ $(document).ready(function () {
         WICK_IN = [],
         POWRED_IN = [],
 
-        TNT = 10,
-        RESULT = 555;
+        TNT = 0,
+        RESULT = -555,
+        
+        // promptX = heroX + 7,
+        // promptY = heroY,
+        
+        
+        promptX = 77,
+        promptY = 23,
+        
+        KILL_MOBS = 0;
 
     //Скрытие pop-container при клике за область экрана.
     $("#pop-container-info").bind("click", function (e) {
@@ -1205,6 +1294,10 @@ $(document).ready(function () {
 
     $("#count-item-torch").text(torchs);
     $("#count-item-tnt").text(TNT);
+
+    $("#prompt").css({left: (promptX * size + deltaX), top: ((promptY + 0.5) * size + deltaY)});
+    $("#prompt").height(size * 2);
+    $("#prompt").width(size);
 
 
 //#region VARRIORS init
@@ -1411,9 +1504,37 @@ $(document).ready(function () {
     map[20][3] = -10;
     map[20][4] = -10;
 
-
     localStorage.result = "null";
 
+
+    eventInfo({
+        "main": {
+            "head": "Добро пожаловать в подземелье!"                    
+        },
+        "buttons": [{
+            "text": "Начать путешествие",
+            "func": closeWindow
+        }],
+        "ps": [
+            "Давным-давно, до Соприкосновения миры жили сами по себе.", 
+
+            "Но люди возомнили, что они - сильнейшие существа во вселенной.",
+            
+            "Не умея до конца контролировать свои силы, они создали самое мощное оружие - пространственный излучатель, способное уничтожать целые миры.",
+            
+            "Замок стал их центром, пунктом управления. Неприступный, он таил в себе множество Человеческих тайн...",
+            
+            "...пока однажды оружие не обратилось против своих создателей, вывернув пространство наизнанку, спутав и смешав миры.",
+            
+            "С тех пор вот уже долгие годы Земля ограждена куполом неиссекаемой Тёмной энергии, а люди, лишенные технологий и контроли над родным миром, бессильны что-то предпринять.",
+
+            "А миры, стянутые против собственной воли, погрязли во мраке и заточении.",
+
+            "Именно тогда и явились вы - спасители Миров, единственной целью которых стало разъединить миры. ",
+            "Уничтожить проклятое оружие.",
+            "Взорвать замок. "        
+        ]
+    });
 // console.log(VARRIORS_CURRENT)        
 });
 
