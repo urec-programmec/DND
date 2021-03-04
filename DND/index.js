@@ -1076,7 +1076,7 @@ $(document).ready(function () {
             result += TNTS[i].length * ROOM_MEAN[i];
 
         if (room != -10)
-            result -= 10;
+            result -= 5;
 
         if (localStorage.result == "null")
             localStorage.result = result;
