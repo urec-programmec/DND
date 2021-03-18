@@ -237,7 +237,7 @@
     margin: 40px auto 0px auto;
     width: 35%;
     height: 650px;
-    padding: 10px 20px;
+    padding: 5px 5px;
     background: #331C00;
     border-radius: 5px;
     box-shadow: 0px 0px 10px #000;
@@ -262,7 +262,7 @@
 
 #pop-container-content-info, #pop-container-content-input, #pop-container-content-get{
     display: grid;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 3fr 1fr;
     margin: 20px auto;
     height: 90%;
     width: 85%;
@@ -278,6 +278,11 @@
     border-bottom: 2px #443724 solid;
     padding: 10px 15px;
     text-align: center;
+}
+
+.zero-margin{
+    margin: 0;
+    font-size: 20px;
 }
 
 #content-actions-info, #content-actions-input, #content-actions-get{
@@ -385,3 +390,5 @@ hr {
 .tasks {
 
 }
+
+
