@@ -2,6 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Underdog&display=swap');
 
 /* Map */
+p {
+    min-height: 10px;
+}
+
 .map {
     position: fixed;
     top: 0;
@@ -131,7 +135,8 @@
 
 #interface-info2 li {
     color: #CCAC7F;
-    margin: 5px;
+    margin: 3px;
+    font-size: 16px;
 }
 
 #button-interface {
@@ -283,6 +288,11 @@
 .zero-margin{
     margin: 0;
     font-size: 20px;
+    min-height: 10px;    
+}
+
+.idea-content{
+    max-width: 350px;
 }
 
 #content-actions-info, #content-actions-input, #content-actions-get{
@@ -387,8 +397,32 @@ hr {
     width: 10px; */
 }
 
-.tasks {
-
+.idea-container {
+    height: 600px;
+    width: 400px;
+    position: absolute;
+    border-radius: 20px;
+    z-index: -1;
+    /* background-image: radial-gradient(closest-corner, #fffb00,#000000); */
+    /* background: url("source/pergament.png") no-repeat; */
+    opacity: 0;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Underdog', cursive;
+    font-size: x-large;
+    text-align: center;
 }
 
+.idea-right-container {
+    top: 17%;
+    left: 70%;
+}
 
+.idea-left-container {
+    top: 10%;
+    left: 10%;
+}
