@@ -1814,6 +1814,17 @@ $(document).ready(function () {
 
     $("#clearAll").click(clearAll);
 
+    $("#craftTNT").click(craftTNT);
+
+    $("#getTNT").click(getTNT);
+
+    $("#putTNT").click(putTNT);
+
+    $("#bang").click(BANG);
+    $("#unbang").click(UNBANG);
+
+    $("#speed").click(() => {SPEED = 100});
+    $("#xspeed").click(() => {SPEED = 0});
 
 
     $("#count-item-torch").text(torchs);
@@ -1832,7 +1843,7 @@ $(document).ready(function () {
             "answer": "357394",
             "prize": {
                 "sand": 1,
-                "powred": 1,
+                "powred": 0,
                 "wick": 0,
                 "tnt": 0
             },
@@ -1846,7 +1857,7 @@ $(document).ready(function () {
             "task": "tasks/30.jpg",
             "answer": "53",
             "prize": {
-                "sand": 1,
+                "sand": 0,
                 "powred": 1,
                 "wick": 0,
                 "tnt": 0
@@ -1863,7 +1874,7 @@ $(document).ready(function () {
             "prize": {
                 "sand": 0,
                 "powred": 0,
-                "wick": 2,
+                "wick": 1,
                 "tnt": 0
             },
             "x": -1,
@@ -1918,6 +1929,21 @@ $(document).ready(function () {
         });
     VARRIORS_GLOBAL.push(
         {
+            "task": "tasks/19.jpg",
+            "answer": "+ *",
+            "prize": {
+                "sand": 0,
+                "powred": 0,
+                "wick": 0,
+                "tnt": 0
+            },
+            "x": -1,
+            "y": -1,
+            "div": "",
+            "room": 0
+        });
+    VARRIORS_GLOBAL.push(
+        {
             "task": "tasks/28.jpg",
             "answer": "6",
             "prize": {
@@ -1938,7 +1964,7 @@ $(document).ready(function () {
             "prize": {
                 "sand": 0,
                 "powred": 1,
-                "wick": 1,
+                "wick": 0,
                 "tnt": 0
             },
             "x": -1,
@@ -1973,8 +1999,8 @@ $(document).ready(function () {
     addResourse("sand", "tasks/5.jpg", "493753");
     addResourse("sand", "tasks/6.jpg", "50");
     addResourse("sand", "tasks/8.jpg", "-2");
-    addResourse("sand", "tasks/8.jpg", "-2");
-    addResourse("sand", "tasks/8.jpg", "-2");
+    addResourse("sand", "", "");
+    addResourse("sand", "", "");
 
     addResourse("wick", "tasks/9.jpg", "2020.5");
     addResourse("wick", "tasks/10.jpg", "2");
@@ -1983,8 +2009,8 @@ $(document).ready(function () {
     addResourse("wick", "tasks/14.jpg", "иванов");
     addResourse("wick", "tasks/15.jpg", "ирина");
     addResourse("wick", "tasks/16.jpg", "петров");
-    addResourse("wick", "tasks/16.jpg", "петров");
-    addResourse("wick", "tasks/16.jpg", "петров");
+    addResourse("wick", "", "");
+    addResourse("wick", "", "");
 
     addResourse("powred", "tasks/17.jpg", "1010011");
     addResourse("powred", "tasks/18.jpg", "сторож");
@@ -1993,13 +2019,13 @@ $(document).ready(function () {
     addResourse("powred", "tasks/22.jpg", "23");
     addResourse("powred", "tasks/23.jpg", "+ + -");
     addResourse("powred", "tasks/25.jpg", "14");
-    addResourse("powred", "tasks/25.jpg", "14");
-    addResourse("powred", "tasks/25.jpg", "14");
-    addResourse("powred", "tasks/25.jpg", "14");
-    addResourse("powreЫd", "tasks/25.jpg", "14");
+    addResourse("powred", "", "");
+    addResourse("powred", "", "");
+    // addResourse("powred", "", "");
+    // addResourse("powred", "", "");
 
 //#endregion
-
+        // console.log("ok")
     for (let i in [1, 1, 1, 1, 1])
         addVarrior();
 
@@ -2051,7 +2077,7 @@ $(document).ready(function () {
     //     }],
     //     "ps": [
     //         "_",
-    //         "1) Соберите ресурсы и сделайте взрывчатку",SD
+    //         "1) Соберите ресурсы и сделайте взрывчатку",
     //         "2) Найдите комнату, над которой находится Оружие и заложите взрывчатку там, или как можно ближе",
     //         "3) Отойдите ко входу (это ещё и выход)",     
     //         "4) Взорвите замок!",
@@ -2060,26 +2086,9 @@ $(document).ready(function () {
     //         "_",
     //         "P.S.",
     //         "Позаботьтесь о расположении динамита. Это крайне важно."
-    //     ]S
-
-
-
-
-
-
-
-
-    $("#craftTNT").click(craftTNT);
-
-    $("#getTNT").click(getTNT);
-
-    $("#putTNT").click(putTNT);
-
-    $("#bang").click(BANG);
-    $("#unbang").click(UNBANG);
-
-    $("#speed").click(() => {SPEED = 100});
-    $("#xspeed").click(() => {SPEED = 0});
-    
-    console.log(VARRIORS_CURRENT)           
+    //     ]
+    // });
+// console.log(VARRIORS_CURRENT)        
 });
+
+
