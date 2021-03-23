@@ -132,6 +132,7 @@ $(document).ready(function () {
             P.textContent = options["main"]["head"];
             content.append(P);
             $(".pop-container-block").height(350);
+            $(".pop-container-block").width("38%");
 
             if ("main" in options["main"]){
                 P = document.createElement("P");
@@ -183,6 +184,9 @@ $(document).ready(function () {
         P.textContent = options["main"]["head"];
         content.append(P);
 
+        $(".pop-container-block").width("55%");
+        $(".pop-container-block").height("min-content");
+
         P = document.createElement("img");
         P.className = "tasks";
         P.src = options["main"]["main"];
@@ -232,6 +236,8 @@ $(document).ready(function () {
         // P = document.createElement("P");
         // P.textContent = options["main"]["main"];
         // content.append(P);
+        $(".pop-container-block-input").width("55%");
+        $(".pop-container-block-input").height("min-content");
 
         P = document.createElement("img");
         P.className = "tasks";
@@ -255,6 +261,7 @@ $(document).ready(function () {
         button.textContent = options["buttons"][0]["text"];
         button.className = "interface-button-action";
         button.onclick = options["buttons"][0]["func"];
+        button.id = "kill-monster";
         actions.append(button);
 
         actions.append(document.createElement("hr"));
@@ -435,10 +442,11 @@ $(document).ready(function () {
             return null;
         }
 
-        // if (e.keyCode == '66') {
-        //     BANG();
-        //     return null;
-        // }
+        if (e.keyCode == '66') {
+
+            alert("Ваши результаты на текущий момент:\nСчёт: " + (localStorage.result === "null" ? 0 : localStorage.result) + "\nКоличество шагов: " + STEPS + "\nВерных ответов: " + RIGHT_ANSWERS + "\nНеверных ответов: " + WRONG_ANSWERS);
+            return null;
+        }
 
         // if (e.keyCode == '78') {
         //     UNBANG();
@@ -602,6 +610,7 @@ $(document).ready(function () {
                         "func": closeWindow
                     }],
                     "ps": [
+                        "(возьми у наставника ГЛАВНЫЙ КВЕСТ)",
                         "",
                         "",
                         "...оружие установлено в комнате, номер которой - Священное число!..",                        
@@ -940,6 +949,7 @@ $(document).ready(function () {
                             addVarrior();
                             varrior["div"].remove();
 
+                            RIGHT_ANSWERS ++;
                             endThisVar("Ты ПОБЕДИЛ!", heroX, heroY, timer, KILL)
                             updateInventory(varrior["prize"], "direct");
                             KILL_MOBS ++;
@@ -988,14 +998,19 @@ $(document).ready(function () {
                             // console.log(VARRIORS_CURRENT);
                         } else {
                             countTrys--;
-                            let P = document.createElement("P");
+                            // let P = document.createElement("P");
+                            // "kill-monster"
+                            WRONG_ANSWERS ++;
+                            let die_message = "" 
                             if (countTrys != 0)
-                                P.textContent = "Неверно! Пытайся ещё " + countTrys + " раз!";
+                                die_message = "НЕВЕРНО! Пытайся ещё " + countTrys + " раз!";
                             else{
-                                P.textContent = "Ты умрёшь.";
+                                die_message = "Ты умрёшь.";                                
                                 die(varrior, timer, KILL); 
                             }
-                            $("#content-explanation-input").append(P);
+                            $("#kill-monster").text(die_message); 
+                            // P.classList.add("zero-margin");
+                            // $("#content-explanation-input").append(P);
                         }
                     }
                 }
@@ -1077,10 +1092,12 @@ $(document).ready(function () {
                         }
                         resourse["div"].remove();
                         GET_RESOURSE = true;
+                        RIGHT_ANSWERS ++;
                         endThisVar("Ресурс получен!", heroX, heroY, null, null);
 
 
                     } else {
+                        WRONG_ANSWERS ++;
                         $("#button_get").text(["У тебя ошибка в рассчётах.", "Отвечаю! У тебя ошибка в рассчётах!", "Ты опять не прав. Снова, да.", "Это не тот ответ", "Будь ты учёным, тебя бы сожгли.", "...there is not correct answer, try again..."][parseInt(Math.random() * 6)]);
                     }
                 }
@@ -1224,8 +1241,12 @@ $(document).ready(function () {
         if (room != -10)
             result -= 5;
 
-        if (localStorage.result == "null")
+        if (localStorage.result == "null"){
             localStorage.result = result;
+            localStorage.steps = STEPS;
+            localStorage.wrong = WRONG_ANSWERS;
+            localStorage.right = RIGHT_ANSWERS;
+        }
 
         document.getElementById("videoPlayer").style.zIndex = "200";
         $("#videoPlayer").animate({opacity: '1'}, 700);
@@ -1242,6 +1263,7 @@ $(document).ready(function () {
                 KABOOM = false;
                 document.getElementById("videoPlayer").style.zIndex = "-1";
                 window.open('result.html');
+                
             }, 700);
         }, 13000);
     }
@@ -1271,7 +1293,18 @@ $(document).ready(function () {
         else if (IDEAS != null && important){
             clearTimeout(closeInfo);
             $("#idea-left").html("");
+            $("#idea-left").animate({zIndex: -1}, 0);
+            $("#idea-left").animate({opacity: '0'}, 0);
+
             $("#idea-right").html("");
+            $("#idea-right").animate({zIndex: -1}, 0);
+            $("#idea-right").animate({opacity: '0'}, 0);
+
+            $("#idea-left-fon").animate({zIndex: -1}, 0);
+            $("#idea-left-fon").animate({opacity: '0'}, 0);
+
+            $("#idea-right-fon").animate({zIndex: -1}, 0);
+            $("#idea-right-fon").animate({opacity: '0'}, 0);
         }
             
         
@@ -1597,6 +1630,8 @@ $(document).ready(function () {
         IDEAS_TIME = 10,
         COUNT_ROOMS = 0,
         GET_RESOURSE = false,
+        WRONG_ANSWERS = 0,
+        RIGHT_ANSWERS = 0,
         IDEAS_COUNTS = {
             first_room_start: {
                 current:0,
@@ -1697,7 +1732,7 @@ $(document).ready(function () {
                 max:1,
                 count_values:3,  
                 head: "Вы УМЕРЛИ",                                     
-                values:[["Гайд по мертвяку:", "", "1) Не паниковать.", "2) Проверить РЕСУРСЫ (их больше нет).", "3) Дорешать предыдущую задачу.", "4) Пойти и убить МОНСТРА.", "", "5) РЕСУРСЫ вернулись! (и даже немного больше)"]],
+                values:[["Гайд по мертвяку:", "", "1) Не паниковать.", "2) Проверить РЕСУРСЫ (их больше нет).", "3) Дорешать предыдущую задачу.", "4) Пойти и убить МОНСТРА.", "", "5) РЕСУРСЫ вернутся! (и даже немного больше)"]],
                 time: 10,
                 important: true
             },
@@ -1839,8 +1874,8 @@ $(document).ready(function () {
 
     VARRIORS_GLOBAL.push(
         {
-            "task": "tasks/7.jpg",
-            "answer": "357394",
+            "task": "tasks/5.jpg",
+            "answer": "Anna the princess of Arendelle",
             "prize": {
                 "sand": 1,
                 "powred": 0,
@@ -1854,8 +1889,8 @@ $(document).ready(function () {
         });
     VARRIORS_GLOBAL.push(
         {
-            "task": "tasks/30.jpg",
-            "answer": "53",
+            "task": "tasks/9.jpg",
+            "answer": "11",
             "prize": {
                 "sand": 0,
                 "powred": 1,
@@ -1870,7 +1905,7 @@ $(document).ready(function () {
     VARRIORS_GLOBAL.push(
         {
             "task": "tasks/12.jpg",
-            "answer": "1515",
+            "answer": "a1111111111",
             "prize": {
                 "sand": 0,
                 "powred": 0,
@@ -1884,42 +1919,12 @@ $(document).ready(function () {
         });
     VARRIORS_GLOBAL.push(
         {
-            "task": "tasks/32.jpg",
-            "answer": "1705",
+            "task": "tasks/15.jpg",
+            "answer": "javascript",
             "prize": {
                 "sand": 1,
                 "powred": 0,
                 "wick": 1,
-                "tnt": 0
-            },
-            "x": -1,
-            "y": -1,
-            "div": "",
-            "room": 0
-        });
-    VARRIORS_GLOBAL.push(
-        {
-            "task": "tasks/16.jpg",
-            "answer": "петров",
-            "prize": {
-                "sand": 0,
-                "powred": 1,
-                "wick": 1,
-                "tnt": 0
-            },
-            "x": -1,
-            "y": -1,
-            "div": "",
-            "room": 0
-        });
-    VARRIORS_GLOBAL.push(
-        {
-            "task": "tasks/33.jpg",
-            "answer": "411225",
-            "prize": {
-                "sand": 1,
-                "powred": 1,
-                "wick": 0,
                 "tnt": 0
             },
             "x": -1,
@@ -1930,7 +1935,37 @@ $(document).ready(function () {
     VARRIORS_GLOBAL.push(
         {
             "task": "tasks/19.jpg",
-            "answer": "+ *",
+            "answer": "86",
+            "prize": {
+                "sand": 0,
+                "powred": 1,
+                "wick": 1,
+                "tnt": 0
+            },
+            "x": -1,
+            "y": -1,
+            "div": "",
+            "room": 0
+        });
+    VARRIORS_GLOBAL.push(
+        {
+            "task": "tasks/20.jpg",
+            "answer": "493753",
+            "prize": {
+                "sand": 1,
+                "powred": 1,
+                "wick": 0,
+                "tnt": 0
+            },
+            "x": -1,
+            "y": -1,
+            "div": "",
+            "room": 0
+        });
+    VARRIORS_GLOBAL.push(
+        {
+            "task": "tasks/25.jpg",
+            "answer": "-6",
             "prize": {
                 "sand": 0,
                 "powred": 0,
@@ -1944,8 +1979,8 @@ $(document).ready(function () {
         });
     VARRIORS_GLOBAL.push(
         {
-            "task": "tasks/28.jpg",
-            "answer": "6",
+            "task": "tasks/30.jpg",
+            "answer": "+ *",
             "prize": {
                 "sand": 1,
                 "powred": 1,
@@ -1959,8 +1994,8 @@ $(document).ready(function () {
         });
     VARRIORS_GLOBAL.push(
         {
-            "task": "tasks/24.jpg",
-            "answer": "37",
+            "task": "tasks/35.jpg",
+            "answer": "14",
             "prize": {
                 "sand": 0,
                 "powred": 1,
@@ -1974,8 +2009,8 @@ $(document).ready(function () {
         });
     VARRIORS_GLOBAL.push(
         {
-            "task": "tasks/29.jpg",
-            "answer": "36",
+            "task": "tasks/37.jpg",
+            "answer": "33",
             "prize": {
                 "sand": 2,
                 "powred": 0,
@@ -1992,38 +2027,36 @@ $(document).ready(function () {
 //#endregion   
 
 //#region RESOURSE init 
-    addResourse("sand", "tasks/1.jpg", "153");
-    addResourse("sand", "tasks/2.jpg", "10");
-    addResourse("sand", "tasks/3.jpg", "0402");
-    addResourse("sand", "tasks/4.jpg", "120");
-    addResourse("sand", "tasks/5.jpg", "493753");
-    addResourse("sand", "tasks/6.jpg", "50");
-    addResourse("sand", "tasks/8.jpg", "-2");
-    addResourse("sand", "", "");
-    addResourse("sand", "", "");
+    addResourse("sand", "tasks/1.jpg", "2 4");
+    addResourse("sand", "tasks/4.jpg", "victor is ours");
+    addResourse("sand", "tasks/10.jpg", "21");
+    addResourse("sand", "tasks/13.jpg", "GЭGЭ~8GЭGЭ88GЭЭ~8");
+    addResourse("sand", "tasks/16.jpg", "jquery");
+    addResourse("sand", "tasks/24.jpg", "15");
+    addResourse("sand", "tasks/26.jpg", "немец");
+    addResourse("sand", "tasks/31.jpg", "15");
+    addResourse("sand", "tasks/34.jpg", "allok");
 
-    addResourse("wick", "tasks/9.jpg", "2020.5");
-    addResourse("wick", "tasks/10.jpg", "2");
-    addResourse("wick", "tasks/11.jpg", "15");
-    addResourse("wick", "tasks/13.jpg", "немец");
-    addResourse("wick", "tasks/14.jpg", "иванов");
-    addResourse("wick", "tasks/15.jpg", "ирина");
-    addResourse("wick", "tasks/16.jpg", "петров");
-    addResourse("wick", "", "");
-    addResourse("wick", "", "");
+    addResourse("wick", "tasks/2.jpg", "13");
+    addResourse("wick", "tasks/6.jpg", "Elsa the queen of Arendelle");
+    addResourse("wick", "tasks/7.jpg", "2 3 6 3 2 13 15");
+    addResourse("wick", "tasks/14.jpg", "22");
+    addResourse("wick", "tasks/17.jpg", "noqvz");
+    addResourse("wick", "tasks/23.jpg", "2");
+    addResourse("wick", "tasks/27.jpg", "Иванов");
+    addResourse("wick", "tasks/32.jpg", "- + -");
+    addResourse("wick", "tasks/36.jpg", "36");
 
-    addResourse("powred", "tasks/17.jpg", "1010011");
-    addResourse("powred", "tasks/18.jpg", "сторож");
-    addResourse("powred", "tasks/20.jpg", "15");
-    addResourse("powred", "tasks/21.jpg", "- + -");
-    addResourse("powred", "tasks/22.jpg", "23");
-    addResourse("powred", "tasks/23.jpg", "+ + -");
-    addResourse("powred", "tasks/25.jpg", "14");
-    addResourse("powred", "", "");
-    addResourse("powred", "", "");
-    // addResourse("powred", "", "");
-    // addResourse("powred", "", "");
-
+    addResourse("powred", "tasks/3.jpg", "think better");
+    addResourse("powred", "tasks/8.jpg", "687");
+    addResourse("powred", "tasks/11.jpg", "70");
+    addResourse("powred", "tasks/18.jpg", "8");
+    addResourse("powred", "tasks/21.jpg", "0402");
+    addResourse("powred", "tasks/22.jpg", "-2");
+    addResourse("powred", "tasks/28.jpg", "Ирина");
+    addResourse("powred", "tasks/33.jpg", "+ + -");
+    addResourse("powred", "tasks/29.jpg", "Петров");
+    
 //#endregion
         // console.log("ok")
     for (let i in [1, 1, 1, 1, 1])
@@ -2048,6 +2081,9 @@ $(document).ready(function () {
     map[20][4] = -10;
 
     localStorage.result = "null";
+    localStorage.steps = "null";
+    localStorage.wrong = "null";
+    localStorage.right = "null";
 
     // showIdea(null, IDEAS_TIME, {
     //     "head": "Привет, я реально рад тебя здесь видеть",

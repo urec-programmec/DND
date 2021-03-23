@@ -17,8 +17,21 @@
     <script>
         $(document).ready(function () {
             let P = document.createElement("P");
-            P.textContent = "ВАШ РЕЗУЛЬТАТ: " + localStorage["result"] + " / 70";
+            P.textContent = "Ваш результат: " + localStorage["result"] + " / 70";            
             $("#result").append(P);
+
+            P = document.createElement("P");
+            P.textContent = "Количество пройденных шагов: " + localStorage["steps"];            
+            $("#result").append(P);
+
+            P = document.createElement("P");
+            P.textContent = "Количество верных ответов: " + localStorage["right"];            
+            $("#result").append(P);
+
+            P = document.createElement("P");
+            P.textContent = "Количество неверных ответов: " + localStorage["wrong"];            
+            $("#result").append(P);
+
         });
     </script>
 </body>

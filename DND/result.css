@@ -10,11 +10,13 @@ body {
 }
 
 #result{
+    display: flex;
+    flex-direction: column;
     width: 50%;
     height: 50%;
     margin: 0px auto;
     font-family: 'Underdog', cursive;
-    font-size: xx-large;
+    font-size: x-large;
     background-image: url("source/fone.jpg");
     border: none;
     color: #CCAC7F;
@@ -32,9 +34,9 @@ body {
 }
 
 #result p {
-    position: absolute;
+    /* position: absolute;
     top: 50%;                
     left: 50%;         
-    transform: translate(-50%, -50%);
-    /* text-align: center; */
+    transform: translate(-50%, -50%); */
+    text-align: center;
 }
