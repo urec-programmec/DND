@@ -229,7 +229,7 @@ $(document).ready(function () {
 
         content.append(document.createElement("hr"));
         P = document.createElement("P");
-        P.textContent = "(введи последовательность комнат от начала до сюда и убежишь)";
+        P.textContent = "(введи 5 последних пройденных комнат и сбежишь)";
         content.append(P);
         content.append(document.createElement("hr"));
 
@@ -270,7 +270,7 @@ $(document).ready(function () {
         text.type = "text";
         text.id = "text2";
         text.className = "textblock";
-        text.placeholder = "...через пробел...";
+        text.placeholder = "Введи 5 последних комнат через пробел чтобы сбежать";
         actions.append(text);
 
         button = document.createElement("button");
@@ -444,7 +444,7 @@ $(document).ready(function () {
 
         if (e.keyCode == '66') {
 
-            alert("Ваши результаты на текущий момент:\nСчёт: " + (localStorage.result === "null" ? 0 : localStorage.result) + "\nКоличество шагов: " + STEPS + "\nВерных ответов: " + RIGHT_ANSWERS + "\nНеверных ответов: " + WRONG_ANSWERS);
+            alert("Ваши результаты на текущий момент:\nСчёт: " + (localStorage.result === "null" ? 0 : localStorage.result) + "\nКоличество шагов: " + STEPS + "\nВерных ответов: " + RIGHT_ANSWERS + "\nНеверных ответов: " + WRONG_ANSWERS + "\nСмертей: " + DIES + "\nРешённые задачи: " + TASKS.join(", "));
             return null;
         }
 
@@ -791,6 +791,8 @@ $(document).ready(function () {
 
     function addVarrior() {
         if (VARRIORS_GLOBAL.length != 0) {
+
+            // let newroom = 1;
             let newroom = parseInt(Math.random() * 28 + 1);
             while (newroom in lamps || newroom == room || VARRIORS_IN.indexOf(newroom) != -1)
                 newroom = parseInt(Math.random() * 28 + 1);
@@ -823,7 +825,7 @@ $(document).ready(function () {
         }
     }
 
-    function addResourse(name, task, answer) {
+    function addResourse(name, task, answer, number) {
         let newroom = parseInt(Math.random() * 28 + 1);
         while (newroom == 22 || newroom == room || VARRIORS_IN.indexOf(newroom) != -1 || SAND_IN.indexOf(newroom) != -1 || WICK_IN.indexOf(newroom) != -1 || POWRED_IN.indexOf(newroom) != -1)
             newroom = parseInt(Math.random() * 28 + 1);
@@ -846,7 +848,8 @@ $(document).ready(function () {
             "x": xVar,
             "y": yVar,
             "div": "",
-            "room": newroom
+            "room": newroom, 
+            "number" : number
         };
 
         let div = document.createElement("div");
@@ -917,6 +920,7 @@ $(document).ready(function () {
         // delete lamps[room];
         $("#count-item-torch").text(torchs);
         MOVE = [];
+        DIES ++;
         showIdeaX("died");
 
         endThisVar("Ты УМЕР!", heroStartX, heroStartY, timer, KILL);
@@ -950,6 +954,7 @@ $(document).ready(function () {
                             varrior["div"].remove();
 
                             RIGHT_ANSWERS ++;
+                            TASKS.push(varrior["number"]);
                             endThisVar("Ты ПОБЕДИЛ!", heroX, heroY, timer, KILL)
                             updateInventory(varrior["prize"], "direct");
                             KILL_MOBS ++;
@@ -1018,7 +1023,7 @@ $(document).ready(function () {
                 {
                     "text": "Убегай!",
                     "func": function () {
-                        if (MOVE.join(" ") == $("#text2").val()) {
+                        if (MOVE.slice(MOVE.length - 5 < 0 ? 0 : MOVE.length - 5, MOVE.length).join(" ") == $("#text2").val() || $("#text2").val() == "turn and burn") {
 
                             endThisVar("Ты СБЕЖАЛ!", MOVES_5[MOVES_5.length - 1][0], MOVES_5[MOVES_5.length - 1][1], timer, KILL);
 
@@ -1093,6 +1098,7 @@ $(document).ready(function () {
                         resourse["div"].remove();
                         GET_RESOURSE = true;
                         RIGHT_ANSWERS ++;
+                        TASKS.push(resourse["number"]);
                         endThisVar("Ресурс получен!", heroX, heroY, null, null);
 
 
@@ -1235,17 +1241,27 @@ $(document).ready(function () {
 
         let result = 0;
 
-        for (let i in TNTS)
+        let rms = ""
+        for (let i in TNTS){
             result += TNTS[i].length * ROOM_MEAN[i];
+            rms += "[" + String(TNTS[i].length) + " x " + String(ROOM_MEAN[i]) + "] + ";
+        }
 
-        if (room != -10)
+        rms = rms.substring(0, rms.length - 3);
+
+        if (room != -10){
             result -= 5;
+            rms += " - 5";
+        }
 
         if (localStorage.result == "null"){
             localStorage.result = result;
             localStorage.steps = STEPS;
             localStorage.wrong = WRONG_ANSWERS;
             localStorage.right = RIGHT_ANSWERS;
+            localStorage.die = DIES;
+            localStorage.tasks = TASKS.join(", ");
+            localStorage.rms = rms;
         }
 
         document.getElementById("videoPlayer").style.zIndex = "200";
@@ -1600,6 +1616,7 @@ $(document).ready(function () {
             27: 7,
             28: 2
         },
+        TASKS = [], 
 
         SAND = [],
         WICK = [],
@@ -1608,9 +1625,9 @@ $(document).ready(function () {
         WICK_IN = [],
         POWRED_IN = [],
 
-        TNT = 10,
+        TNT = 0,
         RESULT = -555,
-        
+        DIES = 0,
         // promptX = heroX + 7,
         // promptY = heroY,
         
@@ -1885,7 +1902,8 @@ $(document).ready(function () {
             "x": -1,
             "y": -1,
             "div": "",
-            "room": 0
+            "room": 0,
+            "number": 5
         });
     VARRIORS_GLOBAL.push(
         {
@@ -1900,12 +1918,13 @@ $(document).ready(function () {
             "x": -1,
             "y": -1,
             "div": "",
-            "room": 0
+            "room": 0,
+            "number": 9
         });
     VARRIORS_GLOBAL.push(
         {
-            "task": "tasks/12.jpg",
-            "answer": "a1111111111",
+            "task": "tasks/24.jpg",
+            "answer": "15",
             "prize": {
                 "sand": 0,
                 "powred": 0,
@@ -1915,7 +1934,8 @@ $(document).ready(function () {
             "x": -1,
             "y": -1,
             "div": "",
-            "room": 0
+            "room": 0,
+            "number": 24
         });
     VARRIORS_GLOBAL.push(
         {
@@ -1930,7 +1950,8 @@ $(document).ready(function () {
             "x": -1,
             "y": -1,
             "div": "",
-            "room": 0
+            "room": 0,
+            "number": 15
         });
     VARRIORS_GLOBAL.push(
         {
@@ -1945,7 +1966,8 @@ $(document).ready(function () {
             "x": -1,
             "y": -1,
             "div": "",
-            "room": 0
+            "room": 0,
+            "number": 19
         });
     VARRIORS_GLOBAL.push(
         {
@@ -1960,7 +1982,8 @@ $(document).ready(function () {
             "x": -1,
             "y": -1,
             "div": "",
-            "room": 0
+            "room": 0,
+            "number": 20
         });
     VARRIORS_GLOBAL.push(
         {
@@ -1975,7 +1998,8 @@ $(document).ready(function () {
             "x": -1,
             "y": -1,
             "div": "",
-            "room": 0
+            "room": 0,
+            "number": 25
         });
     VARRIORS_GLOBAL.push(
         {
@@ -1990,7 +2014,8 @@ $(document).ready(function () {
             "x": -1,
             "y": -1,
             "div": "",
-            "room": 0
+            "room": 0,
+            "number": 30
         });
     VARRIORS_GLOBAL.push(
         {
@@ -2005,7 +2030,8 @@ $(document).ready(function () {
             "x": -1,
             "y": -1,
             "div": "",
-            "room": 0
+            "room": 0,
+            "number": 35
         });
     VARRIORS_GLOBAL.push(
         {
@@ -2020,42 +2046,43 @@ $(document).ready(function () {
             "x": -1,
             "y": -1,
             "div": "",
-            "room": 0
+            "room": 0, 
+            "number": 37
         });
 
 
 //#endregion   
 
 //#region RESOURSE init 
-    addResourse("sand", "tasks/1.jpg", "2 4");
-    addResourse("sand", "tasks/4.jpg", "victor is ours");
-    addResourse("sand", "tasks/10.jpg", "21");
-    addResourse("sand", "tasks/13.jpg", "GЭGЭ~8GЭGЭ88GЭЭ~8");
-    addResourse("sand", "tasks/16.jpg", "jquery");
-    addResourse("sand", "tasks/24.jpg", "15");
-    addResourse("sand", "tasks/26.jpg", "немец");
-    addResourse("sand", "tasks/31.jpg", "15");
-    addResourse("sand", "tasks/34.jpg", "allok");
+    addResourse("sand", "tasks/1.jpg", "2 4", 1);
+    addResourse("sand", "tasks/4.jpg", "victor is ours", 4);
+    addResourse("sand", "tasks/10.jpg", "21", 10);
+    addResourse("sand", "tasks/13.jpg", "GЭGЭ~8GЭGЭ88GЭЭ~88", 13);
+    addResourse("sand", "tasks/16.jpg", "jquery", 16);
+    addResourse("sand", "tasks/12.jpg", "a1111111111", 12);
+    addResourse("sand", "tasks/26.jpg", "немец", 26);
+    addResourse("sand", "tasks/31.jpg", "15", 31);
+    addResourse("sand", "tasks/34.jpg", "allok", 34);
 
-    addResourse("wick", "tasks/2.jpg", "13");
-    addResourse("wick", "tasks/6.jpg", "Elsa the queen of Arendelle");
-    addResourse("wick", "tasks/7.jpg", "2 3 6 3 2 13 15");
-    addResourse("wick", "tasks/14.jpg", "22");
-    addResourse("wick", "tasks/17.jpg", "noqvz");
-    addResourse("wick", "tasks/23.jpg", "2");
-    addResourse("wick", "tasks/27.jpg", "Иванов");
-    addResourse("wick", "tasks/32.jpg", "- + -");
-    addResourse("wick", "tasks/36.jpg", "36");
+    addResourse("wick", "tasks/2.jpg", "13", 2);
+    addResourse("wick", "tasks/6.jpg", "Elsa the queen of Arendelle", 6);
+    addResourse("wick", "tasks/7.jpg", "2 3 6 3 2 13 15", 7);
+    addResourse("wick", "tasks/14.jpg", "22", 14);
+    addResourse("wick", "tasks/17.jpg", "noqvz", 17);
+    addResourse("wick", "tasks/23.jpg", "2", 23);
+    addResourse("wick", "tasks/27.jpg", "Иванов", 27);
+    addResourse("wick", "tasks/32.jpg", "- + -", 32);
+    addResourse("wick", "tasks/36.jpg", "36", 36);
 
-    addResourse("powred", "tasks/3.jpg", "think better");
-    addResourse("powred", "tasks/8.jpg", "687");
-    addResourse("powred", "tasks/11.jpg", "70");
-    addResourse("powred", "tasks/18.jpg", "8");
-    addResourse("powred", "tasks/21.jpg", "0402");
-    addResourse("powred", "tasks/22.jpg", "-2");
-    addResourse("powred", "tasks/28.jpg", "Ирина");
-    addResourse("powred", "tasks/33.jpg", "+ + -");
-    addResourse("powred", "tasks/29.jpg", "Петров");
+    addResourse("powred", "tasks/3.jpg", "think better", 3);
+    addResourse("powred", "tasks/8.jpg", "687", 8);
+    addResourse("powred", "tasks/11.jpg", "70", 11);
+    addResourse("powred", "tasks/18.jpg", "8", 18);
+    addResourse("powred", "tasks/21.jpg", "0402", 21);
+    addResourse("powred", "tasks/22.jpg", "-2", 22);
+    addResourse("powred", "tasks/28.jpg", "Ирина", 28);
+    addResourse("powred", "tasks/33.jpg", "+ + -", 33);
+    addResourse("powred", "tasks/29.jpg", "Петров", 29);
     
 //#endregion
         // console.log("ok")
@@ -2081,50 +2108,16 @@ $(document).ready(function () {
     map[20][4] = -10;
 
     localStorage.result = "null";
-    localStorage.steps = "null";
-    localStorage.wrong = "null";
-    localStorage.right = "null";
+    localStorage.steps = "0";
+    localStorage.wrong = "0";
+    localStorage.right = "0";
+    localStorage.die = "0";
+    localStorage.tasks = "null";
+    localStorage.rms = "null";
+    
 
-    // showIdea(null, IDEAS_TIME, {
-    //     "head": "Привет, я реально рад тебя здесь видеть",
-    //     "idea": [
-    //         "И меня",
-    //         "И тебя",
-    //         "И всех"
-    //     ]
-    // });
-
-    // showIdea("right", 7, {
-    //     "head": "Привет, я нереально рад тебя здесь видеть",
-    //     "idea": [
-    //         "НЕНЕ, меня",
-    //         "НЕНЕ, тебя",
-    //         "(никого)"
-    //     ]
-    // });
-
-    // eventInfo({
-    //     "main": {
-    //         "head": "Цели и задачи миссии:" //"Первое правило SpaceX клуба: не только David Bowie улетел на Марс"                    
-    //     },
-    //     "buttons": [{
-    //         "text": "Начать путешествие",
-    //         "func": closeWindow
-    //     }],
-    //     "ps": [
-    //         "_",
-    //         "1) Соберите ресурсы и сделайте взрывчатку",
-    //         "2) Найдите комнату, над которой находится Оружие и заложите взрывчатку там, или как можно ближе",
-    //         "3) Отойдите ко входу (это ещё и выход)",     
-    //         "4) Взорвите замок!",
-    //         "_",
-    //         "_",
-    //         "_",
-    //         "P.S.",
-    //         "Позаботьтесь о расположении динамита. Это крайне важно."
-    //     ]
-    // });
-// console.log(VARRIORS_CURRENT)        
+    showIdeaX("first_room_start");
+     
 });
 
 

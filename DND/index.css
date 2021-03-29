@@ -150,6 +150,8 @@ p {
     top: 2%;
     z-index: 20;
     cursor: pointer;
+    /* border-radius: 2px;
+    border: 1px solid black; */
 }
 
 #button-interface2 {
@@ -162,16 +164,22 @@ p {
     top: 2%;
     z-index: 20;
     cursor: pointer;
+    /* border-radius: 2px;
+    border: 1px solid black; */
 }
 
 #icon-button-interface {
     width: auto;
     height: 100%;
+    /* border-radius: 2px;
+    border: 1px solid black; */
 }
 
 #icon-button-interface2 {
     width: auto;
     height: 100%;
+    /* border-radius: 2px;
+    border: 1px solid black; */
 }
 
 .interface-button-action {
@@ -184,6 +192,8 @@ p {
     color: #CCAC7F;
     cursor: pointer;
     padding: 5px 0px;
+    border-radius: 5px;
+    border: 1px solid #CCAC7F;
 }
 
 .wrapper-img {
@@ -267,7 +277,7 @@ p {
 }
 
 #pop-container-content-info, #pop-container-content-input, #pop-container-content-get{
-    display: grid;
+    /* display: grid; */
     grid-template-rows: 3fr 1fr;
     margin: 20px auto;
     height: 90%;
@@ -361,10 +371,12 @@ p {
     font-size: large;
     text-align: center;
     background-image: url("source/wood.jpg");
-    border: none;
+    /* border: none; */
     color: #CCAC7F;
     cursor: pointer;
     padding: 10px 0px;
+    border-radius: 5px;
+    border: 1px solid #CCAC7F;
 }
 
 hr {

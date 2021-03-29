@@ -11,13 +11,13 @@
 </head>
 <body>
     <div id="result">
-        <p ></p>
     </div>
 
     <script>
         $(document).ready(function () {
             let P = document.createElement("P");
-            P.textContent = "Ваш результат: " + localStorage["result"] + " / 70";            
+            P.textContent = "ВАШ РЕЗУЛЬТАТ: [ " + localStorage["result"] + " / 70 ]";    
+            P.classList.add("xxsize")        
             $("#result").append(P);
 
             P = document.createElement("P");
@@ -30,6 +30,18 @@
 
             P = document.createElement("P");
             P.textContent = "Количество неверных ответов: " + localStorage["wrong"];            
+            $("#result").append(P);
+
+            P = document.createElement("P");
+            P.textContent = "Количество смертей: " + localStorage["die"];            
+            $("#result").append(P);
+            
+            P = document.createElement("P");
+            P.textContent = "Решённые задачи: " + localStorage["tasks"];            
+            $("#result").append(P);
+
+            P = document.createElement("P");
+            P.textContent = "Расстановка динамитов: " + localStorage["rms"];            
             $("#result").append(P);
 
         });

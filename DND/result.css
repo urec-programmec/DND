@@ -13,7 +13,7 @@ body {
     display: flex;
     flex-direction: column;
     width: 50%;
-    height: 50%;
+    height: 55%;
     margin: 0px auto;
     font-family: 'Underdog', cursive;
     font-size: x-large;
@@ -39,4 +39,8 @@ body {
     left: 50%;         
     transform: translate(-50%, -50%); */
     text-align: center;
+}
+
+.xxsize{
+    font-size: xx-large;
 }
