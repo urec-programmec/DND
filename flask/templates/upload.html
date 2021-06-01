@@ -1,0 +1,9 @@
+<title>upload</title>
+
+<form action="/upload" method="post" class="form borderx fit-content" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+     {{ form.type.label() }}
+     {{ form.type() }}
+     <input type="file" name="input">
+    <button type="submit">upload</button>
+</form>

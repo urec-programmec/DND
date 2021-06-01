@@ -1,0 +1,94 @@
+{% macro footer(session, title) %}
+    <div class="contain">
+        <div class="icon contain" style="background: {{session['color']}}; color: {{session['textColor']}}">
+            <div class="i">{{session['name']}}</div>
+    <!--        <div class="i">[{{session['role']}}]</div>-->
+        </div>
+        <div class="xicon contain xfone" id="profile-open">
+            <div class="h4">profile</div>
+        </div>
+        <h1 class="text-light contain">{{title}}</h1>
+
+    </div>
+{% endmacro %}
+
+
+{% macro profile(session) %}
+<div class="profile" style="background: rgba({{session['r']}}, {{session['g']}}, {{session['b']}}, 0.5); color: {{ session['textColor'] }} !important;" id="profile">
+    <div class="menu text-light h3"><u>your profile:</u></div>
+    <hr>
+    <div class="menu text-light h5">name: <font class="h2">{{ session['name'] }}</font></div>
+    <div class="menu text-light h5">role: <font class="h2">{{ session['role'] }}</font></div>
+    <hr>
+    <div class="menu text-light h3"><u>your actions:</u></div>
+    <hr>
+    <button class="xfone menu btn" onclick="window.location.href='/lobbies'"><span class="h3">all lobbies</span></button>
+    {% if session['role'] == 'teacher' %}
+        <hr>
+        <button class="xfone menu btn" onclick="window.location.href='/mylobbies'"><span class="h3">my lobbies</span></button>
+    {% endif %}
+    <button class="xfone menu btn bottom" onclick="window.location.href='/logout/' + window.location.href"><snan class="h3">logout</snan></button>
+    <hr>
+</div>
+{% endmacro %}
+
+
+{% macro lobbiebutton() %}
+<div class="contain">
+    <button class="contain flex-row border-g text-light h2 btn-success " onclick="window.location.href='/createlobby'">
+        <div class="border-g">&nbsp;+&nbsp;</div>
+        <div>&nbsp;create new lobbie&nbsp;</div>
+        <div class="border-g">&nbsp;+&nbsp;</div>
+    </button>
+    <hr>
+</div>
+{% endmacro %}
+
+{% macro newlobbie(form) %}
+<div class="contain">
+    <form action="" method="post" class="form borderx fit-content">
+    {{ form.hidden_tag() }}
+    <h3>{{ form.owmer.label(class="text-light") }}</h3>
+    <p>{{ form.owmer(class="form-control") }}</p>
+      {% if form.owmer.errors %}
+      <p class="text-warning">
+        {{ form.owmer.errors[0] }}
+      </p>
+    {% endif %}
+
+    <h4>{{ form.type.label(class="text-light") }}</h4>
+    <p>{{ form.type(class="form-control") }}</p>
+      {% if form.type.errors %}
+      <p class="text-warning">
+        {{ form.type.errors[0] }}
+      </p>
+    {% endif %}
+    <p>{{ form.submit(class="btn btn-success fill") }}</p>
+
+    {% for msg in get_flashed_messages() %}
+      <div class="text-warning">{{msg}}</div>
+    {% endfor %}
+  </form>
+</div>
+{% endmacro %}
+
+{% macro lobbie(color, owner, keycode, type, users, U, L) %}
+<div class="contain">
+    <div class="contain border-radius text-light h3 form {% if type == 1 %} {{ 'easy btn-outline-success' }} {% elif type == 2 %} {{ 'normal btn-outline-warning' }} {% else %} {{ 'hard btn-outline-danger' }} {% endif %}"
+    onclick="window.location.href='{% if session['role'] == 'student' %} {{ '/lobby/' + keycode }} {% else %} {{ '/lobbyinfo/' + keycode }} {% endif %}'">
+        <div class="contain flex-row" >
+            <div class="icon-min" style="background: {{ color }}"></div>
+            <div>&nbsp;owner: [ <u>{{ U.query.get(owner).name }}</u> ]</div>
+        </div>
+        {% if users %}
+            <div class="contain h6 flex-row-min">
+                users:&nbsp;<font class="text-light">
+                {% for i in users %}
+                    {{U.query.get(i.user_id).name + ' '}}
+                {% endfor %}</font>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endmacro %}
+
