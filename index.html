@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>DND</title>
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="shortcut icon" href="source/icon.png" type="image/png">
+    <script src="./jquery-3.6.0.js"></script>
+</head>
+<body>
+<div id="map">
+
+    <div id="button-interface">
+        <img id="icon-button-interface" src="source/belt.png">
+    </div>
+
+    <div id="button-interface2">
+        <img id="icon-button-interface2" src="source/belt.png">
+    </div>
+
+    <div id="hero" class="hero"></div>
+    <div id="interface">
+        <div id="interface-info">
+            <div class="items-for-craft">
+                <div class="wrapper-item">
+                    <div class="wrapper-img">
+                        <img src="source/sand.png">
+                    </div>
+                    X <p id="count-item-sand">0</p>
+                </div>
+                <div class="wrapper-item">
+                    <div class="wrapper-img">
+                        <img src="source/powred.png">
+                    </div>
+                    X <p id="count-item-powred">0</p>
+                </div>
+                <div class="wrapper-item">
+                    <div class="wrapper-img">
+                        <img src="source/wick.png">
+                    </div>
+                    X <p id="count-item-wick">0</p>
+                </div>
+            </div>
+            <div class="items-for-use">
+                <div class="wrapper-item">
+                    <div class="wrapper-img">
+                        <img src="source/torch-item.png">
+                    </div>
+                    X <p id="count-item-torch">5</p>
+                </div>
+                <div class="wrapper-item">
+                    <div class="wrapper-img">
+                        <img src="source/tnt.png">
+                    </div>
+                    X <p id="count-item-tnt">0</p>
+                </div>
+            </div>
+
+        </div>
+        <button class="interface-button-action" id="craftTNT">Крафтить динамит!</button>
+        <button class="interface-button-action" id="putTNT">Заложить динамит! (+)</button>
+        <button class="interface-button-action" id="getTNT">Забрать динамит! (-)</button>
+        <hr>
+        <button class="interface-button-action" id="putTorch">Выкинь факел!</button>
+        <button class="interface-button-action" id="getTorch">Забери факел!</button>
+        <hr>
+        <button class="interface-button-action" id="sayAbout">Расскажи про комнату!</button>
+        <button class="interface-button-action" id="clearAll">Не показывай ничего!</button>
+
+    </div>
+
+    <div id="interface2">        
+        <div id="interface-info2">
+            <div class="items-for-craft">
+                <div class="wrapper-item-2">                
+                    До взрыва осталось <p id="count-item-time">0</p> секунд
+                </div>            
+            </div>
+            <p>Навигация:</p>
+            <ul>
+                <li>стрелки - перемещение на 1 клетку вправо / влево / вперед / назад</li>
+                <li>esc - закрывает любые окна (кроме монстров)</li>
+                <li>Z - поставить факел (только в комнате, всего 5 шт)</li>
+                <li>C - отключить / включить авто показ уведомлений при входе во всех комнатах</li>
+                <li>V - открыть / закрыть инвентарь</li>
+                <li>&lt; - включить нормальный режим скорости перемещения</li>
+                <li>&gt; - включить ускоренный режим скорости перемещения</li>
+                <li>? (справа, рядом с shift) - открыть / закрыть справку</li>
+                <li>space - установить динамит (на клетку, в комнату)</li>
+                <li>backspace - удалить динамит (из комнаты)</li>
+            </ul>
+        </div>
+        <button class="interface-button-action" id="bang">Взорвать все</button>
+        <button class="interface-button-action" id="unbang">Отменить взрыв</button>
+        <button class="interface-button-action" id="xspeed">Включить ускоренный режим</button>
+        <button class="interface-button-action" id="speed">Выключить ускоренный режим</button>
+    </div>
+
+
+    <img src="source/fonex.jpg" class="img">
+
+    </div>
+
+    <div id="circle" class="lamp1"></div>
+    <div id="circle2" class="lamp2"></div>
+</div>
+<div class="pop-container" id="pop-container-info">
+    <div class="pop-container-block">
+        <span class="popup-container-close">X</span>
+        <div id="pop-container-content-info">
+            <div id="content-explanation-info"></div>
+            <div id="content-actions-info">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="pop-container" id="pop-container-input">
+    <div class="pop-container-block-input">
+        <div id="pop-container-content-input">
+            <div id="content-explanation-input"></div>
+            <div id="content-actions-input"></div>
+        </div>
+    </div>
+</div>
+
+<div class="pop-container" id="pop-container-get">
+    <div class="pop-container-block">
+        <span class="popup-container-close">X</span>
+        <div id="pop-container-content-get">
+            <div id="content-explanation-get"></div>
+            <div id="content-actions-get">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class = "idea-left-container idea-container" id="idea-left">
+    
+</div>
+<div class = "idea-left-container idea-container" id="idea-left-fon">
+    <img src="source/pergament.png" style="height: 100%; width: 100%;">
+</div>
+
+<div class = "idea-right-container idea-container" id="idea-right">
+    
+</div>
+<div class = "idea-right-container idea-container" id="idea-right-fon">
+    <img src="source/pergament.png" style="height: 100%; width: 100%;">
+</div>
+
+<div id="varriors"></div>
+<div id="sands"></div>
+<div id="wicks"></div>
+<div id="powreds"></div>
+<div id="tnts"></div>
+<div id="prompt"></div>
+
+<video id="videoPlayer">
+    <source src="source/boom.mp4" type="video/mp4">
+</video>
+
+<!-- <script src="window.js"></script>
+<script src="torch.js"></script> -->
+<script src="index.js"></script>
+</body>
+</html>
