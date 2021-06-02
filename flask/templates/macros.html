@@ -2,7 +2,6 @@
     <div class="contain">
         <div class="icon contain" style="background: {{session['color']}}; color: {{session['textColor']}}">
             <div class="i">{{session['name']}}</div>
-    <!--        <div class="i">[{{session['role']}}]</div>-->
         </div>
         <div class="xicon contain xfone" id="profile-open">
             <div class="h4">profile</div>
@@ -13,21 +12,32 @@
 {% endmacro %}
 
 
-{% macro profile(session) %}
+{% macro profile(session, L, U, UL) %}
 <div class="profile" style="background: rgba({{session['r']}}, {{session['g']}}, {{session['b']}}, 0.5); color: {{ session['textColor'] }} !important;" id="profile">
-    <div class="menu text-light h3"><u>your profile:</u></div>
-    <hr>
-    <div class="menu text-light h5">name: <font class="h2">{{ session['name'] }}</font></div>
-    <div class="menu text-light h5">role: <font class="h2">{{ session['role'] }}</font></div>
-    <hr>
-    <div class="menu text-light h3"><u>your actions:</u></div>
-    <hr>
-    <button class="xfone menu btn" onclick="window.location.href='/lobbies'"><span class="h3">all lobbies</span></button>
-    {% if session['role'] == 'teacher' %}
+
+    {% if session.get('key') %}
+        <div class="menu text-light h6 {% if L.query.filter_by(keycode=session['key']).first().type == 1 %} {{ 'btn btn-success' }} {% elif L.query.filter_by(keycode=session['key']).first().type == 2 %} {{ 'btn btn-warning' }} {% else %} {{ 'btn btn-danger' }} {% endif %}">[ {{session['key']}} ]</div>
         <hr>
-        <button class="xfone menu btn" onclick="window.location.href='/mylobbies'"><span class="h3">my lobbies</span></button>
+        <div class="menu text-light h3"><u>lobbie users:</u></div>
+        <hr>
+        {% for i in UL.query.filter_by(lobbie_id=L.query.filter_by(keycode=session['key']).first().id).all() %}
+            <span class="h3" style="color:{{i.color}};">{{U.query.get(i.user_id).name}} <div>
+        {% endfor %}
+        <button class="xfone menu btn bottom" onclick="window.location.href='/leavelobbie/{{session['key']}}'"><snan class="h3">leave lobbie</snan></button>
+    {% else %}
+        <div class="menu text-light h3"><u>your profile:</u></div>
+        <hr>
+        <div class="menu text-light h5">name: <font class="h2">{{ session['name'] }}</font></div>
+        <div class="menu text-light h5">role: <font class="h2">{{ session['role'] }}</font></div>
+        <hr>
+        <button class="xfone menu btn" onclick="window.location.href='/lobbies'"><span class="h3">all lobbies</span></button>
+        {% if session['role'] == 'teacher' %}
+            <hr>
+            <button class="xfone menu btn" onclick="window.location.href='/mylobbies'"><span class="h3">my lobbies</span></button>
+        {% endif %}
+
+        <button class="xfone menu btn bottom" onclick="window.location.href='/logout/' + window.location.href"><snan class="h3">logout</snan></button>
     {% endif %}
-    <button class="xfone menu btn bottom" onclick="window.location.href='/logout/' + window.location.href"><snan class="h3">logout</snan></button>
     <hr>
 </div>
 {% endmacro %}

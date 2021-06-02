@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block body %}
-    {{ profile(session) }}
+    {{ profile(session, lobbies, users, ul) }}
 
     {% if user %}
         {{ footer(session, '#your lobbies') }}

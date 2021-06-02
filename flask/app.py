@@ -6,6 +6,7 @@ from assets.Uppload import Upload
 from flask_sqlalchemy import SQLAlchemy
 import hashlib
 import os
+from math import ceil
 from faker import Factory
 
 
@@ -66,6 +67,7 @@ class u_in_l(db.Model):
     lobbie_id = db.Column(db.Integer, primary_key=True)
     X = db.Column(db.Integer, primary_key=False)
     Y = db.Column(db.Integer, primary_key=False)
+    color = db.Column(db.String(10), primary_key=False)
 
 
     def __repr__(self):
@@ -122,6 +124,10 @@ def fastregister():
 def lobbies():
     if not session.get('name'):
         return redirect('/')
+
+    if session.get('key'):
+        return redirect('lobbie/' + session['key'])
+
     return render_template("lobbies.html", lobbies=Lobbies, ul=u_in_l, users=Users, user=None)
 
 
@@ -165,7 +171,23 @@ def lobby(key):
     with open(os.path.join(app.root_path, 'static/source/fone' + key + '.jpg'), 'wb') as file:
         file.write(type.fone_img)
 
-    return render_template("lobby.html", key=key, map=type.map.decode())
+    text_color = 'rgba(0, 0, 0, 0.1)' if (session['r'] * 0.299 + session['g'] * 0.587 + session['b'] * 0.114) > 150 else 'rgba(255, 255, 255, 0.1)'
+    session['key'] = key
+
+    user_id = Users.query.filter_by(name=session['name']).first().id
+    lobbie_id = Lobbies.query.filter_by(keycode=key).first().id
+    maybe = u_in_l.query.filter_by(user_id=user_id, lobbie_id=lobbie_id).first()
+    print(maybe)
+    if maybe:
+        maybe.color = session['color']
+        db.session.commit()
+    else:
+        ul = u_in_l(user_id=user_id, lobbie_id=lobbie_id, X=3, Y=21, color=session['color'])
+        db.session.add(ul)
+        db.session.commit()
+        print(ul)
+
+    return render_template("lobby.html", key=key, map=type.map.decode(), user=session['name'], color=session['color'], text_color=text_color, len=len, ceil=ceil, L=Lobbies, U=Users, UL=u_in_l)
 
 
 @app.route('/lobbyinfo/<string:key>', methods=['GET', 'POST'])
@@ -174,6 +196,19 @@ def lobbyinfo(key):
         return redirect('/')
 
     return render_template("lobbyinfo.html", key=key)
+
+
+@app.route('/leavelobbie/<string:key>')
+def leavelobbie(key):
+    session.pop('key', None)
+    user_id = Users.query.filter_by(name=session['name']).first().id
+    lobbie_id = Lobbies.query.filter_by(keycode=key).first().id
+    maybe = u_in_l.query.filter_by(user_id=user_id, lobbie_id=lobbie_id).first()
+    if maybe:
+        db.session.delete(maybe)
+        db.session.commit()
+
+    return redirect('/lobbies')
 
 
 @app.route('/logout/<path:old>')
@@ -185,6 +220,7 @@ def logout(old):
     session.pop('b', None)
     session.pop('color', None)
     session.pop('textColor', None)
+    session.pop('key', None)
     return redirect(old)
 
 

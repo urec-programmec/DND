@@ -7,6 +7,8 @@ body {
     left: 0;
     margin: 0;
     position: absolute;
+    font-family: 'Courier New', Courier, monospace !important;
+    overflow: hidden;
 }
 
 .map {
@@ -37,6 +39,7 @@ body {
     background-attachment: fixed;
     background-repeat: repeat;
     background-position: center center;
+    touch-action: none; 
     position: fixed;
     width: 100%;
     height: 100%;
@@ -48,7 +51,7 @@ body {
     height: 72px;
     position: fixed;    
     background-size: cover !important;
-    transform: translate(165px, 105px);
+    transform: translate(165px, 57px);
     content: "";
 }
 
@@ -58,7 +61,7 @@ body {
     height: 72px;
     position: fixed;    
     background-size: cover !important;
-    transform: translate(165px, 105px);
+    transform: translate(165px, 57px);
     content: "";
 }
 
@@ -68,7 +71,7 @@ body {
     height: 72px;
     position: fixed;    
     background-size: cover !important;
-    transform: translate(165px, 105px);
+    transform: translate(165px, 57px);
     content: "";
 }
 
@@ -78,6 +81,97 @@ body {
     height: 72px;
     position: fixed;    
     background-size: cover !important;
-    transform: translate(165px, 105px);
+    transform: translate(165px, 57px);
     content: "";
+}
+
+.text {
+    transform: translate(0, 50px);
+    text-align: center;
+}
+
+.text span {
+    width: fit-content;
+    border-radius: 10px;
+
+}
+
+.xicon {
+    transform: translate(30%, 4px);
+
+    width: fit-content !important;
+    /* height: 100%; */
+    border-radius: 10px;
+    transition: all 0.7s ease;
+    background: linear-gradient(270deg, #18f0b8, #18a2f0, #db5640);
+    background-size: 600% 600%;
+	animation: Gradient 60s ease infinite;
+    opacity: 0;
+    padding-bottom: 6px;
+    line-height: 1.55 !important;
+}
+
+.xicon:hover { 
+    opacity: 1;
+}
+
+.xfone {
+    background: linear-gradient(270deg, #18f0b8, #18a2f0, #db5640);
+    background-size: 600% 600%;
+	animation: Gradient 60s ease infinite;
+}
+
+@-webkit-keyframes Gradient {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@-moz-keyframes Gradient {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@keyframes Gradient { 
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+
+.profile {
+    width: 22%;
+    height: 100%;
+    padding: 20px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transition: all 1s ease;
+    opacity: 0;
+    z-index: -1;
+}
+
+.profile-open {
+    opacity: 1;
+    z-index: 1;
+}
+
+.menu {
+    width: 100%;
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    opacity: 1 !important;   
+}
+
+.fit-content {
+    width: fit-content !important;
+}
+
+.bottom {
+    bottom: 0;
+    position: absolute;
+    left: 0;
+    width: calc(100% - 30px);
+    margin-left: 15px;
+    margin-bottom: 30px;
 }
