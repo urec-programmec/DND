@@ -9,30 +9,36 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
   <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
   <script>
-    var map = {{ map }};
     var users = {};
     {% for i in  UL.query.filter_by(lobbie_id=L.query.filter_by(keycode=key).first().id).all() %}
       users['{{U.query.get(i.user_id).name}}'] = {
+        'name':  '{{U.query.get(i.user_id).name}}',
         'X': {{i.X}},
         'Y': {{i.Y}},
         'color': '{{i.color}}'
       }
     {% endfor %}
-
+    var key = '{{key}}';
     var me = {
         'name': '{{session['name']}}',
         'X': users['{{session['name']}}'].X,
         'Y': users['{{session['name']}}'].Y,
         'color': users['{{session['name']}}'].color
     }
+   var map = {{ map }};
   </script>
 </head>
 <body>
   <div id="fone" class="fone" style="background-image: url('{{ url_for('static', filename='source/fone' + key + '.jpg') }}')"></div>
-  <div id="hero" class="map text-light" style="background-image: url('{{ url_for('static', filename='source/map' + key + '.jpg') }}')">
-    <div class="text h2" style="color: {{color}};"><span style="background: {{text_color}};">&nbsp;{{user}}&nbsp;</span></div>
-    <div class="text h4" style="transform: translate(0px, 4px); width: 100%; position: absolute; color: black;">
-      <span id="profile-open" class="xicon xfone" style="padding: 6px;">
+  <div class="loading-before" id="loading">
+      <p class="P">loading lobie</p>
+  </div>
+  <div class="hero-container">
+    <div id="heros"></div>
+    <div id="hero" class="map text-light" style="background-image: url('{{ url_for('static', filename='source/map' + key + '.jpg') }}')"></div>
+    <div id="hero-t1" class="map text-x h2" style="color: {{color}};"><span style="background: {{text_color}};">&nbsp;{{user}}&nbsp;</span></div>
+    <div id="hero-t2" class="map text-x h4">
+      <span id="profile-open" class="xicon xfone" style="padding-left: 17px; padding-right: 17px; padding-bottom: 0px;">
         {% for i in range(ceil((len(user) - 4) / 2))  %}
           &nbsp;
         {% endfor %}
@@ -40,35 +46,22 @@
         {% for i in range(ceil((len(user) - 4) / 2))  %}
           &nbsp;
         {% endfor %}
-
-
       </span>
     </div>
+    <div id="hero-x" class="map text-light left" style="z-index: 2"></div>
+
+
+    <div id="hero2" class="z-100 map text-light" style="background-image: url('{{ url_for('static', filename='source/map' + key + '.jpg') }}')"></div>
+    <div id="hero2-t1" class="z-100 map text-x h2" style="color: {{color}};"><span style="background: {{text_color}};">&nbsp;{{user}}&nbsp;</span></div>
+    <div id="hero2-t2" class="z-100 map text-x h4"></div>
+    <div id="hero2-x" class="z-100 map text-light left" style="z-index: 2"></div>
+
   </div>
+
   {{ profile(session, L, U, UL) }}
 
 
 
   <script src="{{url_for('static', filename='js/lobbie.js')}}"></script>
-  <style>
-    .torch:after {
-      background-image: url('{{ url_for('static', filename='images/hero.png') }}');
-    }
-    .left:after {
-        background: url('{{ url_for('static', filename='images/left.png') }}') no-repeat;
-    }
-
-    .right:after {
-        background: url('{{ url_for('static', filename='images/right.png') }}') no-repeat;
-    }
-
-    .up:after {
-        background: url('{{ url_for('static', filename='images/back.png') }}') no-repeat;
-    }
-
-    .down:after {
-        background: url('{{ url_for('static', filename='images/front.png') }}') no-repeat;
-    }
-  </style>
 </body>
 </html>

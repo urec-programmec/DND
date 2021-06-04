@@ -7,7 +7,6 @@
             <div class="h4">profile</div>
         </div>
         <h1 class="text-light contain">{{title}}</h1>
-
     </div>
 {% endmacro %}
 
@@ -23,7 +22,9 @@
         {% for i in UL.query.filter_by(lobbie_id=L.query.filter_by(keycode=session['key']).first().id).all() %}
             <span class="h3" style="color:{{i.color}};">{{U.query.get(i.user_id).name}} <div>
         {% endfor %}
-        <button class="xfone menu btn bottom" onclick="window.location.href='/leavelobbie/{{session['key']}}'"><snan class="h3">leave lobbie</snan></button>
+        <hr>
+        <button class="xfone menu btn" onclick="window.location.href='/leavelobbie/{{session['key']}}'"><snan class="h3">leave lobbie</snan></button>
+        <button class="xfone menu btn bottom" onclick="window.location.href='/logout'"><snan class="h3">logout</snan></button>
     {% else %}
         <div class="menu text-light h3"><u>your profile:</u></div>
         <hr>
@@ -36,7 +37,7 @@
             <button class="xfone menu btn" onclick="window.location.href='/mylobbies'"><span class="h3">my lobbies</span></button>
         {% endif %}
 
-        <button class="xfone menu btn bottom" onclick="window.location.href='/logout/' + window.location.href"><snan class="h3">logout</snan></button>
+        <button class="xfone menu btn bottom" onclick="window.location.href='/logout'"><snan class="h3">logout</snan></button>
     {% endif %}
     <hr>
 </div>
@@ -85,7 +86,7 @@
 {% macro lobbie(color, owner, keycode, type, users, U, L) %}
 <div class="contain">
     <div class="contain border-radius text-light h3 form {% if type == 1 %} {{ 'easy btn-outline-success' }} {% elif type == 2 %} {{ 'normal btn-outline-warning' }} {% else %} {{ 'hard btn-outline-danger' }} {% endif %}"
-    onclick="window.location.href='{% if session['role'] == 'student' %} {{ '/lobby/' + keycode }} {% else %} {{ '/lobbyinfo/' + keycode }} {% endif %}'">
+    onclick="window.location.href='{% if session['role'] == 'student' %} {{ '/lobbie/' + keycode }} {% else %} {{ '/lobbieinfo/' + keycode }} {% endif %}'">
         <div class="contain flex-row" >
             <div class="icon-min" style="background: {{ color }}"></div>
             <div>&nbsp;owner: [ <u>{{ U.query.get(owner).name }}</u> ]</div>

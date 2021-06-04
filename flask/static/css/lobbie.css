@@ -9,6 +9,7 @@ body {
     position: absolute;
     font-family: 'Courier New', Courier, monospace !important;
     overflow: hidden;
+    z-index: 1;
 }
 
 .map {
@@ -51,8 +52,10 @@ body {
     height: 72px;
     position: fixed;    
     background-size: cover !important;
-    transform: translate(165px, 57px);
+    transform: translate(165px, 105px);
     content: "";
+    z-index: 100;
+    background: url("../images/left.png");
 }
 
 .right {}
@@ -61,8 +64,10 @@ body {
     height: 72px;
     position: fixed;    
     background-size: cover !important;
-    transform: translate(165px, 57px);
+    transform: translate(165px, 105px);
     content: "";
+    z-index: 100;
+    background: url("../images/right.png");
 }
 
 .up {}
@@ -71,8 +76,10 @@ body {
     height: 72px;
     position: fixed;    
     background-size: cover !important;
-    transform: translate(165px, 57px);
+    transform: translate(165px, 105px);
     content: "";
+    z-index: 100;
+    background: url("../images/back.png");
 }
 
 .down {}
@@ -81,8 +88,10 @@ body {
     height: 72px;
     position: fixed;    
     background-size: cover !important;
-    transform: translate(165px, 57px);
+    transform: translate(165px, 105px);
     content: "";
+    z-index: 100;
+    background: url("../images/front.png");
 }
 
 .text {
@@ -152,7 +161,7 @@ body {
 
 .profile-open {
     opacity: 1;
-    z-index: 1;
+    z-index: 10;
 }
 
 .menu {
@@ -174,4 +183,96 @@ body {
     width: calc(100% - 30px);
     margin-left: 15px;
     margin-bottom: 30px;
+}
+
+.x {
+    background: url("../images/fone.jpg");
+}
+
+.text-x {      
+    text-align: center;
+    z-index: 3;
+}
+
+.text-x span{
+    border-radius: 15px;
+    position: fixed;
+    transform: translate(-50%, 50px);
+}
+
+.loading-before {
+    top:0;
+    left: 0;
+    z-index: 100;
+    height: fit-content !important;
+    min-height: 100% !important;
+    width: 100% !important;
+    position: absolute;
+    font-family: 'Courier New', Courier, monospace !important;
+    /* background: url(../images/fone.jpg); */
+    /* background: rgba(0, 0, 0, 0); */
+    transition: all 1s ease;
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    backdrop-filter: blur(40px);
+}
+
+.loading-end{
+    z-index: -100;
+}
+
+.loading-end-end{
+    opacity: 0;
+}
+/* 
+.loading-before::before{
+   content: "";
+   background: inherit; 
+   position: absolute;
+   left: 0;
+   right: 0;
+   top: 0;
+   bottom: 0;
+   filter: blur(10px);
+} */
+
+.P {
+    /* font-weight: 700; */
+    text-align: center;
+    /* font-size: 50px; */
+ 
+    position: relative;
+    background: 50% 100% / 50% 50% no-repeat
+                radial-gradient(ellipse at bottom, #fff, transparent, transparent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    font-size: 5vw;
+    color: transparent;
+    /* font-family: "Source Sans Pro", sans-serif; */
+    animation: reveal 1500ms forwards 200ms,
+               glow 1500ms linear infinite 2000ms;
+}
+@keyframes reveal {
+    80%{
+    letter-spacing: 8px;
+    }
+    100% {
+    background-size: 300% 300%;
+    }
+}
+@keyframes glow {
+    40% {
+    text-shadow: 0 0 8px #fff;
+    }
+}
+
+.z-100 {
+    z-index: -100 !important;
+}
+
+#hero {
+    box-shadow: 0 0 25px rgba(255, 208, 0, 0.3); 
 }

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, url_for, flash
+from flask import Flask, render_template, request, redirect, session, url_for, flash, jsonify
 from assets.Comein import Comein
 from assets.Register import Register
 from assets.Createlobby import Createlobby
@@ -126,7 +126,7 @@ def lobbies():
         return redirect('/')
 
     if session.get('key'):
-        return redirect('lobbie/' + session['key'])
+        return redirect('lobby/' + session['key'])
 
     return render_template("lobbies.html", lobbies=Lobbies, ul=u_in_l, users=Users, user=None)
 
@@ -158,7 +158,7 @@ def createlobby():
     return render_template("createlobby.html", form=form)
 
 
-@app.route('/lobby/<string:key>', methods=['GET', 'POST'])
+@app.route('/lobbie/<string:key>', methods=['GET', 'POST'])
 def lobby(key):
     if not session.get('name'):
         return redirect('/')
@@ -187,15 +187,15 @@ def lobby(key):
         db.session.commit()
         print(ul)
 
-    return render_template("lobby.html", key=key, map=type.map.decode(), user=session['name'], color=session['color'], text_color=text_color, len=len, ceil=ceil, L=Lobbies, U=Users, UL=u_in_l)
+    return render_template("lobbie.html", key=key, map=type.map.decode(), user=session['name'], color=session['color'], text_color=text_color, len=len, ceil=ceil, L=Lobbies, U=Users, UL=u_in_l)
 
 
-@app.route('/lobbyinfo/<string:key>', methods=['GET', 'POST'])
+@app.route('/lobbieinfo/<string:key>', methods=['GET', 'POST'])
 def lobbyinfo(key):
     if not session.get('name'):
         return redirect('/')
 
-    return render_template("lobbyinfo.html", key=key)
+    return render_template("lobbieinfo.html", key=key)
 
 
 @app.route('/leavelobbie/<string:key>')
@@ -211,8 +211,8 @@ def leavelobbie(key):
     return redirect('/lobbies')
 
 
-@app.route('/logout/<path:old>')
-def logout(old):
+@app.route('/logout')
+def logout():
     session.pop('name', None)
     session.pop('role', None)
     session.pop('r', None)
@@ -221,7 +221,23 @@ def logout(old):
     session.pop('color', None)
     session.pop('textColor', None)
     session.pop('key', None)
-    return redirect(old)
+    return redirect('/')
+
+
+@app.route('/savestate', methods=['GET', 'POST'])
+def savestate():
+    key = request.form['key']
+    x = request.form['x']
+    y = request.form['y']
+
+    ul = u_in_l.query.filter_by(user_id=Users.query.filter_by(name=session['name']).first().id, lobbie_id=Lobbies.query.filter_by(keycode=key).first().id).first()
+    ul.X = x
+    ul.Y = y
+    print(x, " ", y)
+
+    db.session.commit()
+
+    return jsonify({'result': 'ok'})
 
 
 @app.route('/upload', methods=['GET', 'POST'])
@@ -237,4 +253,4 @@ def upload():
 
 
 if __name__ == "__main__":
-    app.run(port=8090, host='192.168.50.9', debug=True)
+    app.run(port=8090, host='127.0.0.1', debug=True)
