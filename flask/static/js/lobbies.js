@@ -8,3 +8,4 @@ $('#profile-open').on("click", () => {
 }); 
 
 setTimeout(() => $('body').addClass('blur'), 200);
+

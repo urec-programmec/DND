@@ -4,6 +4,7 @@ from assets.Register import Register
 from assets.Createlobby import Createlobby
 from assets.Uppload import Upload
 from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO, send, join_room, leave_room
 import hashlib
 import os
 from math import ceil
@@ -16,6 +17,7 @@ app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:pass@localhost/lobhub'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+socketio = SocketIO(app)
 
 
 class Users(db.Model):
@@ -73,6 +75,47 @@ class u_in_l(db.Model):
     def __repr__(self):
         return '<UL %r>' % str(self.user_id) + " " + str(self.lobbie_id)
 
+def socket_users(key):
+    ul = u_in_l.query.filter_by(lobbie_id=Lobbies.query.filter_by(keycode=key).first().id).all()
+    users = []
+    for i in ul:
+        users.append({
+            'name': Users.query.get(i.user_id).name,
+            'X': i.X,
+            'Y': i.Y,
+            'color': i.color})
+    return users
+
+@socketio.on('start')
+def start(data):
+    room = data['key']
+    join_room(room)
+    send(socket_users(room), to=room)
+
+@socketio.on('go')
+def go(data):
+    print(data)
+    key = data['key']
+    x = data['X']
+    y = data['Y']
+
+    ul = u_in_l.query.filter_by(user_id=Users.query.filter_by(name=session['name']).first().id,
+                                lobbie_id=Lobbies.query.filter_by(keycode=key).first().id).first()
+    ul.X = x
+    ul.Y = y
+
+    db.session.commit()
+    send(socket_users(key), to=key)
+
+@socketio.on('end')
+def end(data):
+    room = data['key']
+    leave_room(room)
+    leavelobbie()
+    session.pop('key', None)
+    print(session.get('key'))
+    send(socket_users(room), to=room)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def comein():
@@ -82,7 +125,8 @@ def comein():
     if request.method == "POST":
         if form.validate_on_submit():
             name = form.login.data
-            if Users.query.filter_by(name=name).first():
+            user = Users.query.filter_by(name=name).first()
+            if user and user.name == name:
                 color = Factory.create().hex_color()
                 r, g, b = tuple(int(color.lstrip('#')[i:i + 2], 16) for i in (0, 2, 4))
                 text_color = '#000000' if (r*0.299 + g*0.587 + b*0.114) > 150 else '#ffffff'
@@ -109,7 +153,7 @@ def fastregister():
         if form.validate_on_submit():
             name = form.login.data
             type = form.role.data
-            if not Users.query.filter_by(name=name).first():
+            if not Users.query.filter_by(name=name).first() and name != 'hero' and name != 'hero2':
                 user = Users(name=name, type=type)
                 db.session.add(user)
                 db.session.commit()
@@ -122,11 +166,13 @@ def fastregister():
 
 @app.route('/lobbies', methods=['GET', 'POST'])
 def lobbies():
+    print(' загрузка ')
+    print(session.get('key'))
     if not session.get('name'):
         return redirect('/')
 
     if session.get('key'):
-        return redirect('lobby/' + session['key'])
+        return redirect('lobbie/' + session['key'])
 
     return render_template("lobbies.html", lobbies=Lobbies, ul=u_in_l, users=Users, user=None)
 
@@ -159,7 +205,7 @@ def createlobby():
 
 
 @app.route('/lobbie/<string:key>', methods=['GET', 'POST'])
-def lobby(key):
+def lobbie(key):
     if not session.get('name'):
         return redirect('/')
 
@@ -177,7 +223,7 @@ def lobby(key):
     user_id = Users.query.filter_by(name=session['name']).first().id
     lobbie_id = Lobbies.query.filter_by(keycode=key).first().id
     maybe = u_in_l.query.filter_by(user_id=user_id, lobbie_id=lobbie_id).first()
-    print(maybe)
+    # print(maybe)
     if maybe:
         maybe.color = session['color']
         db.session.commit()
@@ -185,7 +231,7 @@ def lobby(key):
         ul = u_in_l(user_id=user_id, lobbie_id=lobbie_id, X=3, Y=21, color=session['color'])
         db.session.add(ul)
         db.session.commit()
-        print(ul)
+        # print(ul)
 
     return render_template("lobbie.html", key=key, map=type.map.decode(), user=session['name'], color=session['color'], text_color=text_color, len=len, ceil=ceil, L=Lobbies, U=Users, UL=u_in_l)
 
@@ -198,17 +244,21 @@ def lobbyinfo(key):
     return render_template("lobbieinfo.html", key=key)
 
 
-@app.route('/leavelobbie/<string:key>')
-def leavelobbie(key):
-    session.pop('key', None)
+@app.route('/leavelobbie', methods=['GET', 'POST'])
+def leavelobbie():
     user_id = Users.query.filter_by(name=session['name']).first().id
-    lobbie_id = Lobbies.query.filter_by(keycode=key).first().id
+    lobbie_id = Lobbies.query.filter_by(keycode=session['key']).first().id
     maybe = u_in_l.query.filter_by(user_id=user_id, lobbie_id=lobbie_id).first()
     if maybe:
         db.session.delete(maybe)
         db.session.commit()
 
+    session.pop('key', None)
     return redirect('/lobbies')
+
+
+
+
 
 
 @app.route('/logout')
@@ -233,11 +283,26 @@ def savestate():
     ul = u_in_l.query.filter_by(user_id=Users.query.filter_by(name=session['name']).first().id, lobbie_id=Lobbies.query.filter_by(keycode=key).first().id).first()
     ul.X = x
     ul.Y = y
-    print(x, " ", y)
+    # print(x, " ", y)
 
     db.session.commit()
 
     return jsonify({'result': 'ok'})
+
+
+@app.route('/refresh/<string:key>', methods=['GET', 'POST'])
+def refresh(key):
+
+    ul = u_in_l.query.filter_by(lobbie_id=Lobbies.query.filter_by(keycode=key).first().id).all()
+    users = []
+    for i in ul:
+        users.append({
+        'name':  Users.query.get(i.user_id).name,
+        'X': i.X,
+        'Y': i.Y,
+        'color': i.color})
+
+    return jsonify(users)
 
 
 @app.route('/upload', methods=['GET', 'POST'])
@@ -253,4 +318,4 @@ def upload():
 
 
 if __name__ == "__main__":
-    app.run(port=8090, host='127.0.0.1', debug=True)
+    socketio.run(app, port=8090, host='127.0.0.1', debug=True)

@@ -8,6 +8,9 @@
   <link rel="shortcut icon" href="{{url_for('static', filename='images/icon.png')}}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
   <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+<!--  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>-->
+  <script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
+
   <script>
     var users = {};
     {% for i in  UL.query.filter_by(lobbie_id=L.query.filter_by(keycode=key).first().id).all() %}
@@ -26,12 +29,14 @@
         'color': users['{{session['name']}}'].color
     }
    var map = {{ map }};
+
+   var socket = io.connect('http://127.0.0.1:8090');
   </script>
 </head>
 <body>
   <div id="fone" class="fone" style="background-image: url('{{ url_for('static', filename='source/fone' + key + '.jpg') }}')"></div>
   <div class="loading-before" id="loading">
-      <p class="P">loading lobie</p>
+      <p class="P" id="loading-text">loading lobbie</p>
   </div>
   <div class="hero-container">
     <div id="heros"></div>

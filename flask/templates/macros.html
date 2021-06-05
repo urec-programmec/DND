@@ -23,7 +23,7 @@
             <span class="h3" style="color:{{i.color}};">{{U.query.get(i.user_id).name}} <div>
         {% endfor %}
         <hr>
-        <button class="xfone menu btn" onclick="window.location.href='/leavelobbie/{{session['key']}}'"><snan class="h3">leave lobbie</snan></button>
+        <button class="xfone menu btn" onclick="socket.emit('end', {'key': key}); window.location.href='/leavelobbie'"><snan class="h3">leave lobbie</snan></button>
         <button class="xfone menu btn bottom" onclick="window.location.href='/logout'"><snan class="h3">logout</snan></button>
     {% else %}
         <div class="menu text-light h3"><u>your profile:</u></div>
