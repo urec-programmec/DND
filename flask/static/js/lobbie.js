@@ -77,14 +77,19 @@ $( document ).ready(function() {
         }
         else {
             for (let i in data){
-                if (data[i].X > users[data[i].name].X)
-                    move_right('#' + data[i].name, 1, true, true)
-                else if (data[i].X < users[data[i].name].X)
-                    move_left('#' + data[i].name, 1, true, true)
-                else if (data[i].Y > users[data[i].name].Y)
-                    move_down('#' + data[i].name, 1, true, true)
-                else if (data[i].Y < users[data[i].name].Y)
-                    move_up('#' + data[i].name, 1, true, true)
+                if (data[i].name != me.name){
+                    if (data[i].X > users[data[i].name].X)
+                        move_right('#' + data[i].name, data[i].X - users[data[i].name].X, true, true, true)
+                    else if (data[i].X < users[data[i].name].X)
+                        move_left('#' + data[i].name, users[data[i].name].X - data[i].X , true, true, true)
+                    else if (data[i].Y > users[data[i].name].Y)
+                        move_down('#' + data[i].name,  data[i].Y - users[data[i].name].Y, true, true, true)
+                    else if (data[i].Y < users[data[i].name].Y)
+                        move_up('#' + data[i].name, users[data[i].name].Y - data[i].Y, true, true, true)
+
+                    users[data[i].name].X = data[i].X
+                    users[data[i].name].Y = data[i].Y
+                }
             }
         }
     });
@@ -247,18 +252,18 @@ $( document ).ready(function() {
             move_down('#hero', 1);
     }
 
-    function move_left(selector, count, ignored_rules=false, up_off_map=false){
+    function move_left(selector, count, ignored_rules=false, up_off_map=false, notme=false){
         
-        if (hero.x > 0 && map[hero.y][hero.x - 1] != -1 || ignored_rules){
+        if (hero.x > 0 && map[hero.y][hero.x - 1] != -1 || ignored_rules  || notme){
             for (let i = 0; i < count; i++){
-                if ((hero.x > 0 && map[hero.y][hero.x - 1] != -1 || ignored_rules) && ($(selector).position().left > -130 || parseInt($(selector).css('backgroundPosition').split(" ")[0]) < 130)){
-                    if ($(selector).position().left > -130){
+                if (((hero.x > 0 && map[hero.y][hero.x - 1] != -1 || ignored_rules) && ($(selector).position().left > -130 || parseInt($(selector).css('backgroundPosition').split(" ")[0]) < 130))  || notme){
+                    if ($(selector).position().left > -130  || notme){
                         $(selector).css({"left": "calc(" + $(selector).position().left + "px - 32px)"});
                         $(selector + '-x').css({"left": "calc(" + $(selector + '-x').position().left + "px - 32px)"});
                         $(selector + '-t1').css({"left": "calc(" + $(selector + '-t1').position().left + "px - 32px)"});
                         $(selector + '-t2').css({"left": "calc(" + $(selector + '-t2').position().left + "px - 32px)"});
                     }
-                    else if (selector == '#hero' || init_access){
+                    else if ((selector == '#hero' || init_access) && !notme){
                         for (i in users){
                             n = init_access ?  selector : '#' + me.name;
                             if ('#' + users[i].name != n){
@@ -288,19 +293,19 @@ $( document ).ready(function() {
         }
     }
     
-    function move_right(selector, count, ignored_rules=false, up_off_map=false){
+    function move_right(selector, count, ignored_rules=false, up_off_map=false, notme=false){
         
 
-        if (hero.x < 107 && map[hero.y][hero.x + 1] != -1 || ignored_rules){
+        if (hero.x < 107 && map[hero.y][hero.x + 1] != -1 || ignored_rules  || notme){
             for (let i = 0; i < count; i++){
-                if ((hero.x < 108 && map[hero.y][hero.x + 1] != -1 || ignored_rules) && -1 * parseInt($(selector).css('backgroundPosition').split(" ")[0]) + 200 <= 3456){
-                    if ($(document).width() - $(selector).position().left - 200 >= 32){
+                if (((hero.x < 108 && map[hero.y][hero.x + 1] != -1 || ignored_rules) && -1 * parseInt($(selector).css('backgroundPosition').split(" ")[0]) + 200 <= 3456)  || notme){
+                    if ($(document).width() - $(selector).position().left - 200 >= 32  || notme){
                         $(selector).css({"left": "calc(" + $(selector).position().left + "px + 32px)"});                
                         $(selector + "-x").css({"left": "calc(" + $(selector + "-x").position().left + "px + 32px)"});                
                         $(selector + "-t1").css({"left": "calc(" + $(selector + "-t1").position().left + "px + 32px)"});                
                         $(selector + "-t2").css({"left": "calc(" + $(selector + "-t2").position().left + "px + 32px)"});                
                     }
-                    else if (selector == '#hero' || init_access){
+                    else if ((selector == '#hero' || init_access) && !notme){
                         for (i in users){
                             n = init_access ?  selector : '#' + me.name;
                             if ('#' + users[i].name != n){
@@ -331,19 +336,19 @@ $( document ).ready(function() {
         }
     }
     
-    function move_up(selector, count, ignored_rules=false, up_off_map=false){
+    function move_up(selector, count, ignored_rules=false, up_off_map=false, notme=false){
         
 
-        if (hero.y > 0 && map[hero.y - 1][hero.x] != -1 || ignored_rules){
+        if (hero.y > 0 && map[hero.y - 1][hero.x] != -1 || ignored_rules || notme){
             for (let i = 0; i < count; i++){
-                if ((hero.y > 0 && map[hero.y - 1][hero.x] != -1 || ignored_rules) && ($(selector).position().top > -150 || parseInt($(selector).css('backgroundPosition').split(" ")[1]) < 150)){
-                    if ($(selector).position().top > -150){
-                        $(selector).css({"top": "calc(" + $(selector).position().top + "px - 32px)"});
+                if (((hero.y > 0 && map[hero.y - 1][hero.x] != -1 || ignored_rules) && ($(selector).position().top > -150 || parseInt($(selector).css('backgroundPosition').split(" ")[1]) < 150)  || notme)){
+                    if ($(selector).position().top > -150  || notme){
+                        $(selector).css({"top": "calc(" + $(selector).position().top + "px - 32px)" });
                         $(selector + '-x').css({"top": "calc(" + $(selector + '-x').position().top + "px - 32px)"});
                         $(selector + '-t1').css({"top": "calc(" + $(selector + '-t1').position().top + "px - 32px)"});
                         $(selector + '-t2').css({"top": "calc(" + $(selector + '-t2').position().top + "px - 32px)"});
                     }
-                    else if (selector == '#hero' || init_access){
+                    else if ((selector == '#hero' || init_access) && !notme){
                         for (i in users){
                             n = init_access ?  selector : '#' + me.name;
                             if ('#' + users[i].name != n){
@@ -373,18 +378,18 @@ $( document ).ready(function() {
         }
     }
     
-    function move_down(selector,count, ignored_rules=false, up_off_map=false){
+    function move_down(selector,count, ignored_rules=false, up_off_map=false, notme=false){
 
-        if (hero.y < 47 && map[hero.y + 1][hero.x] != -1 || ignored_rules){
+        if (hero.y < 47 && map[hero.y + 1][hero.x] != -1 || ignored_rules || notme){
             for (let i = 0; i < count; i++){
-                if ((hero.y < 48 && map[hero.y + 1][hero.x] != -1 || ignored_rules) && -1 * parseInt($(selector).css('backgroundPosition').split(" ")[1]) + 200 <= 1536){           
-                    if ($(document).height() - $(selector).position().top - 200 >= 32){
+                if (((hero.y < 48 && map[hero.y + 1][hero.x] != -1 || ignored_rules) && -1 * parseInt($(selector).css('backgroundPosition').split(" ")[1]) + 200 <= 1536) || notme){           
+                    if ($(document).height() - $(selector).position().top - 200 >= 32 || notme){
                         $(selector).css({"top": "calc(" + $(selector).position().top + "px + 32px)"});
                         $(selector + '-x').css({"top": "calc(" + $(selector + '-x').position().top + "px + 32px)"});
                         $(selector + '-t1').css({"top": "calc(" + $(selector + '-t1').position().top + "px + 32px)"});
                         $(selector + '-t2').css({"top": "calc(" + $(selector + '-t2').position().top + "px + 32px)"});
                     }
-                    else if (selector == '#hero' || init_access){
+                    else if ((selector == '#hero' || init_access) && !notme){
                         for (i in users){
                             n = init_access ?  selector : '#' + me.name;
                             if ('#' + users[i].name != n){
