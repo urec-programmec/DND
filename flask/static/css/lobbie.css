@@ -217,7 +217,7 @@ body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    backdrop-filter: blur(40px);
+    /* backdrop-filter: blur(40px); */
 }
 
 .loading-end{

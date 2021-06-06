@@ -7,12 +7,17 @@ $( document ).ready(function() {
     });
 
     socket.on('message', function(data) {
+        // console.log('data')
+        // console.log(data)
+        // console.log(users)
+        // console.log('---')
+
         if (Object.keys(users).length - 1 > Object.keys(data).length){
             names = []
-            for (i in data)
+            for (let i in data)
                 names.push(data[i].name)
 
-            for (i in users){
+            for (let i in users){
                 if (names.indexOf(users[i].name) == -1 && users[i].name != 'hero2'){
                     console.log('delete');
                     $("#" + users[i].name).remove();
@@ -20,59 +25,81 @@ $( document ).ready(function() {
                     $("#" + users[i].name + "-t1").remove();
                     $("#" + users[i].name + "-t2").remove();
                     delete users[i];
+                    console.log(users)
                 }
             }
         }
         else if (Object.keys(users).length - 1 < Object.keys(data).length){
-            // console.log('add');
+            console.log('add');
             // console.log(users);
+            // console.log(data);
+
+
             for (let i in data){
+                // console.log(data[i].name)
+                // console.log(Object.keys(users).indexOf(data[i].name))
                 if (Object.keys(users).indexOf(data[i].name) == -1){
 
                     $("#loading").removeClass("loading-end");
                     $("#loading").removeClass("loading-end-end");
                     $(".delete").remove();
-                    $('#loading-text').text("new player coming");                
+                    $('#loading-text').text("new player coming");                                     
                     map[hero.y][hero.x] = hero.room;
-                    console.log('first ' + data[i].name);
+                    users = {};
+                    me.X = data.find(u => u.name === me.name).X;
+                    me.Y = data.find(u => u.name === me.name).Y;
+                    // users = Object.assign({
+                    //     [data[i].name]: {
+                    //         name: data[i].name,
+                    //         X: data[i].X,
+                    //         Y: data[i].Y,
+                    //         color: data[i].color
+                    //     }
+                    // }, users);
+                    // console.log('first ' + data[i].name);
 
-                    let counter = 0;
-                    let t1 = setInterval(() => {
-                        console.log('first ' + data[i].name);
-                        if (counter == hero.x){                    
-                            counter = 0;
-                            clearInterval(t1);
-                            let t2 = setInterval(() => {
-                                if (counter == hero.y){         
+                    let cnt = 0;
+                    let tt1 = setInterval(() => {
+                        // console.log('first ' + data[i].name);
+                        if (cnt == hero.x){                    
+                            cnt = 0;
+                            // init_access = true;
+                            clearInterval(tt1);
+                            delete tt1;
+                            let tt2 = setInterval(() => {
+                                if (cnt > hero.y){
+                                    clearInterval(tt2);
+                                    delete tt2;
+                                    return;
+                                }
+                                if (cnt == hero.y){         
                                     // console.log(Y);
-                                    clearInterval(t2);
-                                    users = Object.assign({
-                                        [data[i].name]: {
-                                            name: data[i].name,
-                                            X: data[i].X,
-                                            Y: data[i].Y,
-                                            color: data[i].color
-                                        }
-                                    }, users);
-
-                                    console.log(users);
-                                    console.log('two ' + data[i].name);
-                    
-                                    full_init();                                           
+                                    clearInterval(tt2);
+                                    delete tt2;
+                                    for (let ii in data)
+                                        users = Object.assign({
+                                            [data[ii].name]: {
+                                                name: data[ii].name,
+                                                X: data[ii].X,
+                                                Y: data[ii].Y,
+                                                color: data[ii].color
+                                            }
+                                        }, users);        
+                                        // return;                                                            
+                                    return full_init();                                                 
                                 }                          
                                 else {                                
-                                    counter ++;                             
-                                    move_up('#hero', 1, true, true);
-                                
+                                    cnt ++;                             
+                                    move_up('#hero', 1, true, true);                                
                                 }
-                            },1)
+                            },0)
                         }  
                         else {                       
-                            counter ++;                    
+                            cnt ++;                    
                             move_left('#hero', 1, true, true);                                                                           
                         }            
-                    },1);               
-                }                
+                    },0);               
+                } 
             }
         }
         else {
@@ -86,10 +113,13 @@ $( document ).ready(function() {
                         move_down('#' + data[i].name,  data[i].Y - users[data[i].name].Y, true, true, true)
                     else if (data[i].Y < users[data[i].name].Y)
                         move_up('#' + data[i].name, users[data[i].name].Y - data[i].Y, true, true, true)
-
-                    users[data[i].name].X = data[i].X
-                    users[data[i].name].Y = data[i].Y
                 }
+                else {
+                    me.X = data[i].X;
+                    me.Y = data[i].Y;
+                }
+                users[data[i].name].X = data[i].X;
+                users[data[i].name].Y = data[i].Y;               
             }
         }
     });
@@ -125,7 +155,7 @@ $( document ).ready(function() {
         move_left('#hero', 5, true, true);
         move_up('#hero', 5, true, true);
 
-        for (i in users){
+        for (let i in users){
             if (users[i].name != me.name && users[i].name != 'hero2'){
                 $('#heros').append(template(users[i]));
                 move_left('#' + users[i].name, 5, true, true)
@@ -143,6 +173,12 @@ $( document ).ready(function() {
         move_left('#hero2', 5, true, true);
         move_up('#hero2', 5, true, true);
     
+        console.log('go go go')
+        console.log(hero)
+        console.log(users)
+        console.log(me)
+        console.log('go go go')
+
         init(Object.keys(users)[0]);
     }
 
@@ -151,9 +187,11 @@ $( document ).ready(function() {
         // if(selector != 'hirovo')
         //     return;
 
-        next = Object.keys(users).indexOf(selector) != Object.keys(users).length - 1 ? Object.keys(users)[Object.keys(users).indexOf(selector) + 1] : null;
-        counter = 0;
-        back = false;
+        let next = Object.keys(users).indexOf(selector) != Object.keys(users).length - 1 ? Object.keys(users)[Object.keys(users).indexOf(selector) + 1] : null;
+        let counter = 0;
+        let back = false;
+        let X = 0;
+        let Y = 0;
 
         if (selector == me.name){
             selector = '#hero';
@@ -220,20 +258,24 @@ $( document ).ready(function() {
                         counter ++;
                         if (back)
                             move_up(selector, 1, true, selector != '#hero');
-                        else
+                        else {
+                            console.log('down');
                             move_down(selector, 1, true, selector != '#hero');
+                        }
                     }
-                },1)
+                },0)
             }  
             else {
                 // console.log('1 ' + counter)
                 counter ++;
                 if (back)
                     move_left(selector, 1, true, selector != '#hero');                                    
-                else 
+                else {
+                    console.log('right');
                     move_right(selector, 1, true, selector != '#hero');                
+                }
             }            
-        },1);
+        },0);
     }
 
     function check(e){
@@ -253,7 +295,8 @@ $( document ).ready(function() {
     }
 
     function move_left(selector, count, ignored_rules=false, up_off_map=false, notme=false){
-        
+        // console.log(selector);
+        // console.log(init_access);
         if (hero.x > 0 && map[hero.y][hero.x - 1] != -1 || ignored_rules  || notme){
             for (let i = 0; i < count; i++){
                 if (((hero.x > 0 && map[hero.y][hero.x - 1] != -1 || ignored_rules) && ($(selector).position().left > -130 || parseInt($(selector).css('backgroundPosition').split(" ")[0]) < 130))  || notme){
@@ -264,10 +307,11 @@ $( document ).ready(function() {
                         $(selector + '-t2').css({"left": "calc(" + $(selector + '-t2').position().left + "px - 32px)"});
                     }
                     else if ((selector == '#hero' || init_access) && !notme){
-                        for (i in users){
+                        for (let ii in users){
                             n = init_access ?  selector : '#' + me.name;
-                            if ('#' + users[i].name != n){
-                                who = users[i].name == me.name ? '#hero' : "#" + users[i].name;
+                            if ('#' + users[ii].name != n){
+                                who = users[ii].name == me.name ? '#hero' : "#" + users[ii].name;
+                                // console.log($(who))
                                 $(who).css({"left": "calc(" + $(who).position().left + "px + 32px)"});                
                                 $(who + "-x").css({"left": "calc(" + $(who + "-x").position().left + "px + 32px)"});                
                                 $(who + "-t1").css({"left": "calc(" + $(who + "-t1").position().left + "px + 32px)"});                
@@ -306,10 +350,10 @@ $( document ).ready(function() {
                         $(selector + "-t2").css({"left": "calc(" + $(selector + "-t2").position().left + "px + 32px)"});                
                     }
                     else if ((selector == '#hero' || init_access) && !notme){
-                        for (i in users){
+                        for (let ii in users){
                             n = init_access ?  selector : '#' + me.name;
-                            if ('#' + users[i].name != n){
-                                who = users[i].name == me.name ? '#hero' : "#" + users[i].name;
+                            if ('#' + users[ii].name != n){
+                                who = users[ii].name == me.name ? '#hero' : "#" + users[ii].name;
                                 $(who).css({"left": "calc(" + $(who).position().left + "px - 32px)"});
                                 $(who + '-x').css({"left": "calc(" + $(who + '-x').position().left + "px - 32px)"});
                                 $(who + '-t1').css({"left": "calc(" + $(who + '-t1').position().left + "px - 32px)"});
@@ -349,10 +393,10 @@ $( document ).ready(function() {
                         $(selector + '-t2').css({"top": "calc(" + $(selector + '-t2').position().top + "px - 32px)"});
                     }
                     else if ((selector == '#hero' || init_access) && !notme){
-                        for (i in users){
+                        for (let ii in users){
                             n = init_access ?  selector : '#' + me.name;
-                            if ('#' + users[i].name != n){
-                                who = users[i].name == me.name ? '#hero' : "#" + users[i].name;
+                            if ('#' + users[ii].name != n){
+                                who = users[ii].name == me.name ? '#hero' : "#" + users[ii].name;
                                 $(who).css({"top": "calc(" + $(who).position().top + "px + 32px)"});
                                 $(who + '-x').css({"top": "calc(" + $(who + '-x').position().top + "px + 32px)"});
                                 $(who + '-t1').css({"top": "calc(" + $(who + '-t1').position().top + "px + 32px)"});
@@ -390,10 +434,10 @@ $( document ).ready(function() {
                         $(selector + '-t2').css({"top": "calc(" + $(selector + '-t2').position().top + "px + 32px)"});
                     }
                     else if ((selector == '#hero' || init_access) && !notme){
-                        for (i in users){
+                        for (let ii in users){
                             n = init_access ?  selector : '#' + me.name;
-                            if ('#' + users[i].name != n){
-                                who = users[i].name == me.name ? '#hero' : "#" + users[i].name;
+                            if ('#' + users[ii].name != n){
+                                who = users[ii].name == me.name ? '#hero' : "#" + users[ii].name;
                                 $(who).css({"top": "calc(" + $(who).position().top + "px - 32px)"});
                                 $(who + '-x').css({"top": "calc(" + $(who + '-x').position().top + "px - 32px)"});
                                 $(who + '-t1').css({"top": "calc(" + $(who + '-t1').position().top + "px - 32px)"});
