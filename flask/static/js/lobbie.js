@@ -24,39 +24,29 @@ $( document ).ready(function() {
                     $("#" + users[i].name + "-x").remove();
                     $("#" + users[i].name + "-t1").remove();
                     $("#" + users[i].name + "-t2").remove();
+                    $('#' + users[i].name + '-profile-color').remove();
                     delete users[i];
-                    console.log(users)
+                    // console.log(users)
                 }
             }
         }
         else if (Object.keys(users).length - 1 < Object.keys(data).length){
             console.log('add');
-            // console.log(users);
-            // console.log(data);
-
-
+            let yet = true;
             for (let i in data){
-                // console.log(data[i].name)
-                // console.log(Object.keys(users).indexOf(data[i].name))
-                if (Object.keys(users).indexOf(data[i].name) == -1){
-
+                if (Object.keys(users).indexOf(data[i].name) == -1 && yet){
+                    yet = false;
+                    // console.log('new');
+                    // console.log(data[i].name);
                     $("#loading").removeClass("loading-end");
                     $("#loading").removeClass("loading-end-end");
                     $(".delete").remove();
                     $('#loading-text').text("new player coming");                                     
                     map[hero.y][hero.x] = hero.room;
                     users = {};
+                    let name = data[i].name;
                     me.X = data.find(u => u.name === me.name).X;
                     me.Y = data.find(u => u.name === me.name).Y;
-                    // users = Object.assign({
-                    //     [data[i].name]: {
-                    //         name: data[i].name,
-                    //         X: data[i].X,
-                    //         Y: data[i].Y,
-                    //         color: data[i].color
-                    //     }
-                    // }, users);
-                    // console.log('first ' + data[i].name);
 
                     let cnt = 0;
                     let tt1 = setInterval(() => {
@@ -85,7 +75,8 @@ $( document ).ready(function() {
                                                 color: data[ii].color
                                             }
                                         }, users);        
-                                        // return;                                                            
+                                        // return;     
+                                    $('#profile-container').append(`<div><span id="` + data[i].name + `-profile-color" class="h3" style="color:` + data[i].color + `;">&nbsp;` + data[i].name + `&nbsp;</span></div>`)                                    
                                     return full_init();                                                 
                                 }                          
                                 else {                                
@@ -119,7 +110,9 @@ $( document ).ready(function() {
                     me.Y = data[i].Y;
                 }
                 users[data[i].name].X = data[i].X;
-                users[data[i].name].Y = data[i].Y;               
+                users[data[i].name].Y = data[i].Y;   
+                $('#' + data[i].name + '-profile-color').css('color', data[i].color);            
+                $('#' + data[i].name + '-t1').css('color', data[i].color);            
             }
         }
     });
@@ -173,11 +166,11 @@ $( document ).ready(function() {
         move_left('#hero2', 5, true, true);
         move_up('#hero2', 5, true, true);
     
-        console.log('go go go')
-        console.log(hero)
-        console.log(users)
-        console.log(me)
-        console.log('go go go')
+        // console.log('go go go')
+        // console.log(hero)
+        // console.log(users)
+        // console.log(me)
+        // console.log('go go go')
 
         init(Object.keys(users)[0]);
     }
@@ -259,7 +252,7 @@ $( document ).ready(function() {
                         if (back)
                             move_up(selector, 1, true, selector != '#hero');
                         else {
-                            console.log('down');
+                            // console.log('down');
                             move_down(selector, 1, true, selector != '#hero');
                         }
                     }
@@ -271,7 +264,7 @@ $( document ).ready(function() {
                 if (back)
                     move_left(selector, 1, true, selector != '#hero');                                    
                 else {
-                    console.log('right');
+                    // console.log('right');
                     move_right(selector, 1, true, selector != '#hero');                
                 }
             }            
@@ -484,22 +477,6 @@ $( document ).ready(function() {
         // });
     }
 
-    function refresh(){
-        if (!can_write)
-            return;
-
-        $.ajax({            
-            type: 'POST',
-            url: '/refresh/' + key
-        })
-        .done(function(data) {
-            if (data.error)
-                console.log('error')  
-            else 
-                console.log(data)  
-        });
-    }
-
     function template(user){
         text_color = (hex_rgb(user.color).r * 0.299 + hex_rgb(user.color).g * 0.587 + hex_rgb(user.color).b * 0.114) > 150 ?'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)'
         
@@ -537,88 +514,3 @@ $( document ).ready(function() {
     }); 
 });
 
-
-// function init(selector, notyet=false, end=false){
-//     // if(selector != 'hirovo')
-//     //     return;
-
-//     next = Object.keys(users).indexOf(selector) != Object.keys(users).length - 1 ? Object.keys(users)[Object.keys(users).indexOf(selector) + 1] : null;
-//     counter = 0;
-//     back = false;
-
-//     if (end){
-//         selector = '#' + selector;
-//         X = me.X;
-//         Y = me.Y;
-//     }
-//     else if (notyet) {
-//         selector = '#' + selector;
-//         X = 108;
-//         Y = 48;
-//         back = true;
-//     }    
-//     else {
-//         X = users[selector].X;
-//         Y = users[selector].Y;
-//         selector = '#' + selector;
-//     }
-
-//     if (selector == me.name && !notyet && next != null)
-//         return init(next)
-//     else if (next == null && !notyet)
-//         return init('hero2', true)
-    
-
-//     console.log(selector)
-
-//     let t1 = setInterval(() => {
-//         if (counter >= X){
-//             console.log(X);
-//             counter = 0;
-//             clearInterval(t1);
-//             let t2 = setInterval(() => {
-//                 if (counter >= Y){         
-//                     console.log(Y);
-//                     clearInterval(t2);
-//                     console.log(next);
-//                     if (next != null || notyet || end){                                                              
-//                         if (end){
-//                             // can_write = true;     
-//                             init_access = false;     
-//                             $("#loading").addClass("loading-end-end");
-//                             setTimeout(() => {
-//                                 $("#loading").addClass("loading-end");
-//                             }, 1000);
-//                             return;
-//                         }
-//                         else if (notyet){
-//                             // init('hero', true, true)
-//                         }   
-//                         else 
-//                             init(next);
-//                     }
-//                     else if (next == null){
-//                         console.log('last');
-//                         init('hero2', true)
-//                     }
-//                 }                          
-//                 else {
-//                     console.log('2 ' + counter)
-//                     counter ++;
-//                     if (back)
-//                         move_up(selector, 1, true, selector != '#hero');
-//                     else
-//                         move_down(selector, 1, true, selector != '#hero');
-//                 }
-//             },1)
-//         }  
-//         else {
-//             console.log('1 ' + counter)
-//             counter ++;
-//             if (back)
-//                 move_left(selector, 1, true, selector != '#hero');                                    
-//             else 
-//                 move_right(selector, 1, true, selector != '#hero');                
-//         }            
-//     },1);
-// }

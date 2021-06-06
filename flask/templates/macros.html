@@ -19,9 +19,11 @@
         <hr>
         <div class="menu text-light h3"><u>lobbie users:</u></div>
         <hr>
-        {% for i in UL.query.filter_by(lobbie_id=L.query.filter_by(keycode=session['key']).first().id).all() %}
-            <span class="h3" style="color:{{i.color}};">{{U.query.get(i.user_id).name}} <div>
-        {% endfor %}
+        <div id="profile-container">
+            {% for i in UL.query.filter_by(lobbie_id=L.query.filter_by(keycode=session['key']).first().id).all() %}
+            <div><span id="{{U.query.get(i.user_id).name + '-profile-color'}}" class="h3" style="color:{{i.color}};">&nbsp;{{U.query.get(i.user_id).name}}&nbsp;</span></div>
+            {% endfor %}
+        </div>
         <hr>
         <button class="xfone menu btn" onclick="socket.emit('end', {'key': key}); window.location.href='/leavelobbie'"><snan class="h3">leave lobbie</snan></button>
         <button class="xfone menu btn bottom" onclick="window.location.href='/logout'"><snan class="h3">logout</snan></button>
@@ -36,8 +38,8 @@
             <hr>
             <button class="xfone menu btn" onclick="window.location.href='/mylobbies'"><span class="h3">my lobbies</span></button>
         {% endif %}
-
-        <button class="xfone menu btn bottom" onclick="window.location.href='/logout'"><snan class="h3">logout</snan></button>
+        <hr>
+        <button class="xfone menu btn" onclick="window.location.href='/logout'"><snan class="h3">logout</snan></button>
     {% endif %}
     <hr>
 </div>
