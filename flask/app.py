@@ -67,6 +67,8 @@ class Result(db.Model):
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     data = db.Column(db.LargeBinary(length=(2 ** 24) - 1), primary_key=False)
+    status = db.Column(db.String(50), unique=False, nullable=False)
+    answer = db.Column(db.String(255), unique=False, nullable=False)
 
     def __repr__(self):
         return '<Task %r>' % self.id
@@ -96,7 +98,7 @@ class t_in_l(db.Model):
     lobbie_id = db.Column(db.Integer, db.ForeignKey('lobbies.id'), primary_key=True)
     task_id = db.Column(db.Integer, db.ForeignKey('task.id'), primary_key=True)
     status = db.Column(db.String(15), primary_key=False)
-    resolver = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=False)
+    resolver = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=False, nullable=True)
     X = db.Column(db.Integer, primary_key=False)
     Y = db.Column(db.Integer, primary_key=False)
 
