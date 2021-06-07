@@ -126,8 +126,13 @@ $( document ).ready(function() {
         y: 0,
         room: -1
     }    
+    var load_task = null;
     var can_write = false;
     var init_access = true;
+
+    for (let i in tasks){
+        $('body').append(template_task(tasks[i], 'sand'));
+    }
 
     full_init();
 
@@ -497,6 +502,22 @@ $( document ).ready(function() {
             <div id="` + user.name + "-x" + `" class="delete map text-light left" style="z-index: 2"></div>`
     }
 
+    function template_task(task, what){
+        return `
+        <div id="task` + task[0] + `" class="task" style="background: rgba(` + hex_rgb(me.color).r + `, ` + hex_rgb(me.color).g + `, ` + hex_rgb(me.color).b + `, 0.5) !important;">
+            <hr>
+            <h2>#get ` + what + `</h2>
+            <img style="width:fit-content; height:fit-content; border-radius: 15px;" src="/static/source/lobbie-tasks/task` + task[0] + `.jpg"></img>
+            <hr>
+            <h2>#answer</h2>
+            <input type="text" id="task-i-` + task[0] + `" class="text-send form-control" style="width: 50% !important; padding-left:20px; padding-right:20px; margin-left:20px; margin-right:20px;">
+            <hr>
+            <button id="task-b-` + task[0] + `" class="h send xfone menu btn" style="width: 50% !important; padding-left:20px; padding-right:20px; margin-left:20px; margin-right:20px;">get</button>
+            <hr>
+        </div>
+        `
+    }
+
     function hex_rgb(hex) {
         var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
         hex = hex.replace(shorthandRegex, function(m, r, g, b) {
@@ -512,8 +533,27 @@ $( document ).ready(function() {
     }
     
     function find(){
-        if (hero.room == -10 && can_write)
-            console.log('find');        
+        if (hero.room == -10 && can_write) {
+            for (let i in tasks){
+                if (tasks[i][1] == hero.x && tasks[i][2] == hero.y){
+                    // $('#task' + tasks[i][0]).addClass('zz-100');
+                    $('#task' + tasks[i][0]).addClass('task-z-open');
+                    clearTimeout(load_task);
+                    load_task = setTimeout(() => {
+                        $('#task' + tasks[i][0]).addClass('task-t-open');                        
+                        $('#task' + tasks[i][0]).addClass('task-open');
+                    }, 1);
+                }
+            }
+        }
+        else if (hero.room != -10){
+            $('.task').removeClass('task-open');
+            clearTimeout(load_task);
+            load_task = setTimeout(() => {
+                $('.task').removeClass('task-z-open');
+                $('.task').removeClass('task-t-open');
+            }, 1000);
+        }                    
     }
 
     $('#profile-open').on("click", () => {
@@ -522,6 +562,29 @@ $( document ).ready(function() {
         }
         else{
             $('#profile').removeClass('profile-open');
+        }
+    }); 
+
+    $('.send').on("click", (e) => {
+        // console.log(e.srcElement.id.substr(7));
+        // console.log($('#task-i-' + e.originalEvent.srcElement.id.substr(7)));
+        let id =  e.originalEvent.srcElement.id.substr(7);
+        let val = $('#task-i-' + id).val() === undefined ? '' : $('#task-i-' + id).val()
+        console.log(val);
+        console.log(tasks.find(t => t[0] == id)[3]);
+        $('#task-i-' + id).removeClass('correct');
+        $('#task-i-' + id).removeClass('incorrect');
+        $('#task-b-' + id).removeClass('correct');
+        $('#task-b-' + id).removeClass('incorrect');
+        if (val === tasks.find(t => t[0] == id)[3].toString()){
+            $('#task-i-' + id).addClass('correct');
+            $('#task-b-' + id).addClass('correct');
+            
+            // here
+        }
+        else {
+            $('#task-i-' + id).addClass('incorrect');
+            $('#task-b-' + id).addClass('incorrect');
         }
     }); 
 });

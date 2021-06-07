@@ -290,7 +290,35 @@ body {
     justify-content:flex-start;
     align-items: center;
     border-radius: 15px;
-    z-index: 100;
+    z-index: -100;
     overflow-y: scroll;
+    opacity: 0;
+}
 
+.task-open {
+    opacity: 1 !important;
+}
+
+.task-t-open{
+    transition: all 1s ease;
+}
+
+.task-z-open {
+    z-index: 11 !important;
+}
+
+.h {
+    font-size: 1.7rem !important;
+    font-weight: 300;
+}
+
+
+.correct {
+    box-shadow: 0 0 50px rgb(0, 255, 0) !important; 
+    border: 3px solid rgb(0, 255, 0);
+}
+
+.incorrect {
+    box-shadow: 0 0 50px rgb(255, 0, 0) !important; 
+    border: 3px solid rgb(255, 0, 0);
 }
