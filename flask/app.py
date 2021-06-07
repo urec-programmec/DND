@@ -64,6 +64,14 @@ class Result(db.Model):
         return '<Result %r>' % self.id
 
 
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    data = db.Column(db.LargeBinary(length=(2 ** 24) - 1), primary_key=False)
+
+    def __repr__(self):
+        return '<Task %r>' % self.id
+
+
 class u_in_l(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     lobbie_id = db.Column(db.Integer, primary_key=True)
@@ -71,9 +79,29 @@ class u_in_l(db.Model):
     Y = db.Column(db.Integer, primary_key=False)
     color = db.Column(db.String(10), primary_key=False)
 
-
     def __repr__(self):
         return '<UL %r>' % str(self.user_id) + " " + str(self.lobbie_id)
+
+
+class r_in_t(db.Model):
+    type_id = db.Column(db.Integer, db.ForeignKey('type.id'), primary_key=True)
+    X = db.Column(db.Integer, primary_key=True)
+    Y = db.Column(db.Integer, primary_key=True)
+
+    def __repr__(self):
+        return '<RT %r>' % str(self.user_id) + " " + str(self.lobbie_id)
+
+
+class t_in_l(db.Model):
+    lobbie_id = db.Column(db.Integer, db.ForeignKey('lobbies.id'), primary_key=True)
+    task_id = db.Column(db.Integer, db.ForeignKey('task.id'), primary_key=True)
+    status = db.Column(db.String(15), primary_key=False)
+    resolver = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=False)
+    X = db.Column(db.Integer, primary_key=False)
+    Y = db.Column(db.Integer, primary_key=False)
+
+    def __repr__(self):
+        return '<TL %r>' % str(self.user_id) + " " + str(self.lobbie_id)
 
 def socket_users(key):
     ul = u_in_l.query.filter_by(lobbie_id=Lobbies.query.filter_by(keycode=key).first().id).all()
@@ -166,8 +194,6 @@ def fastregister():
 
 @app.route('/lobbies', methods=['GET', 'POST'])
 def lobbies():
-    print(' загрузка ')
-    print(session.get('key'))
     if not session.get('name'):
         return redirect('/')
 
@@ -210,11 +236,16 @@ def lobbie(key):
         return redirect('/')
 
     type = Type.query.get(Lobbies.query.filter_by(keycode=key).first().type)
+    tasks = t_in_l.query.filter_by(lobbie_id=Lobbies.query.filter_by(keycode=key).first().id).all()
 
-    with open(os.path.join(app.root_path, 'static/source/map' + key + '.jpg'), 'wb') as file:
+    for i in tasks:
+        with open(os.path.join(app.root_path, 'static/tasks/task' + i.task_id + '.jpg'), 'wb') as file:
+            file.write(Task.query.get(i.task_id).data)
+
+    with open(os.path.join(app.root_path, 'static/source/maps/map' + key + '.jpg'), 'wb') as file:
         file.write(type.map_img)
 
-    with open(os.path.join(app.root_path, 'static/source/fone' + key + '.jpg'), 'wb') as file:
+    with open(os.path.join(app.root_path, 'static/source/fones/fone' + key + '.jpg'), 'wb') as file:
         file.write(type.fone_img)
 
     text_color = 'rgba(0, 0, 0, 0.1)' if (session['r'] * 0.299 + session['g'] * 0.587 + session['b'] * 0.114) > 150 else 'rgba(255, 255, 255, 0.1)'
@@ -232,6 +263,8 @@ def lobbie(key):
         db.session.add(ul)
         db.session.commit()
         # print(ul)
+
+    # print(type.map.decode())
 
     return render_template("lobbie.html", key=key, map=type.map.decode(), user=session['name'], color=session['color'], text_color=text_color, len=len, ceil=ceil, L=Lobbies, U=Users, UL=u_in_l)
 
@@ -308,13 +341,23 @@ def refresh(key):
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     form = Upload()
-    if request.method == "POST":
-        file = request.files['input']
-        t = Type.query.get(form.type.data)
-        t.map_img = file.read()
-        # db.session.commit()
 
-    return render_template("upload.html", form=form)
+    # if request.method == "POST":
+    #     file = request.files['input']
+    #     # t = Type.query.get(form.type.data)
+    #     # print(file.read())
+    #     # t.map = file.read()
+    #     task = Task(data=file.read())
+    #
+    #     db.session.add(task)
+    #     db.session.commit()
+
+    # ts = Task.query.get(19)
+
+    # with open(os.path.join(app.root_path, 'static/source/bg.jpg'), 'wb') as file:
+    #         file.write(ts.data)
+
+    return render_template("upload.html", form=form, )
 
 
 if __name__ == "__main__":

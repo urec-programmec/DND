@@ -2,6 +2,8 @@ $( document ).ready(function() {
     
     document.onkeydown = check;
 
+    // console.log(map);
+
     socket.on('connect', function() {
         socket.emit('start', {'key': key});
     });
@@ -274,17 +276,33 @@ $( document ).ready(function() {
     function check(e){
         // console.log(map);
 
-        if (e.keyCode == '37')
+        if (e.keyCode == '37'){
             move_left('#hero', 1);
+            // console.log('X Y');
+            // console.log(hero.x + " " + hero.y);
+            // console.log(' ');
+        }
 
-        if (e.keyCode == '38')
+        if (e.keyCode == '38'){
             move_up('#hero', 1);
+            // console.log('X Y');
+            // console.log(hero.x + " " + hero.y);
+            // console.log(' ');
+        }
 
-        if (e.keyCode == '39')
+        if (e.keyCode == '39'){
             move_right('#hero', 1);
+            // console.log('X Y');
+            // console.log(hero.x + " " + hero.y);
+            // console.log(' ');
+        }
 
-        if (e.keyCode == '40')
+        if (e.keyCode == '40'){
             move_down('#hero', 1);
+            // console.log('X Y');
+            // console.log(hero.x + " " + hero.y);
+            // console.log(' ');
+        }
     }
 
     function move_left(selector, count, ignored_rules=false, up_off_map=false, notme=false){
@@ -319,6 +337,7 @@ $( document ).ready(function() {
                         hero.x--;
                         hero.room = map[hero.y][hero.x];
                         map[hero.y][hero.x] = 'x';
+                        find();
                         savestate();
                     }
                 }
@@ -361,6 +380,7 @@ $( document ).ready(function() {
                         hero.x++;
                         hero.room = map[hero.y][hero.x];
                         map[hero.y][hero.x] = 'x';
+                        find();
                         savestate();
                     }
                 }
@@ -404,6 +424,7 @@ $( document ).ready(function() {
                         hero.y--;
                         hero.room = map[hero.y][hero.x];
                         map[hero.y][hero.x] = 'x';
+                        find();
                         savestate();
                     }
                 }
@@ -445,6 +466,7 @@ $( document ).ready(function() {
                         hero.y++;
                         hero.room = map[hero.y][hero.x];
                         map[hero.y][hero.x] = 'x';
+                        find();                
                         savestate();
                     }
                 }
@@ -460,28 +482,14 @@ $( document ).ready(function() {
         if (!can_write)
             return;
             
-        socket.emit('go', {'key': key, 'X':hero.x, 'Y': hero.y});
-        
-        // $.ajax({
-        //     data: {
-        //         key: key,
-        //         x: hero.x,
-        //         y: hero.y
-        //     },
-        //     type: 'POST',
-        //     url: '/savestate'
-        // })
-        // .done(function(data) {
-        //     if (data.error)
-        //         console.log('error')                  
-        // });
+        socket.emit('go', {'key': key, 'X':hero.x, 'Y': hero.y});       
     }
 
     function template(user){
         text_color = (hex_rgb(user.color).r * 0.299 + hex_rgb(user.color).g * 0.587 + hex_rgb(user.color).b * 0.114) > 150 ?'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)'
         
         return  `
-            <div id="` + user.name + `" class="delete map text-light" style="background-image: url('/static/source/map` + key + `.jpg')">
+            <div id="` + user.name + `" class="delete map text-light" style="background-image: url('/static/source/maps/map` + key + `.jpg')">
                 <div class="text h2" style="color: ` + user.color + `;"><span style="background: ` + text_color + `;">&nbsp;` + user.name + `&nbsp;</span></div>           
             </div>
             <div id="` + user.name + `-t1" class="delete map text-x h2" style="color: ` + user.color + `;"><span style="background: ` + text_color + `;">&nbsp;` + user.name + `&nbsp;</span></div>
@@ -501,8 +509,12 @@ $( document ).ready(function() {
           g: parseInt(result[2], 16),
           b: parseInt(result[3], 16)
         } : null;
-      }
+    }
     
+    function find(){
+        if (hero.room == -10)
+            console.log('find');        
+    }
 
     $('#profile-open').on("click", () => {
         if (! $('#profile').hasClass('profile-open')){
