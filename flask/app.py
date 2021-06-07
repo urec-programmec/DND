@@ -6,7 +6,7 @@ from assets.Uppload import Upload
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, send, join_room, leave_room
 import hashlib
-import os
+import os, random
 from math import ceil
 from faker import Factory
 
@@ -67,7 +67,6 @@ class Result(db.Model):
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     data = db.Column(db.LargeBinary(length=(2 ** 24) - 1), primary_key=False)
-    status = db.Column(db.String(50), unique=False, nullable=False)
     answer = db.Column(db.String(255), unique=False, nullable=False)
 
     def __repr__(self):
@@ -143,7 +142,6 @@ def end(data):
     leave_room(room)
     leavelobbie()
     session.pop('key', None)
-    print(session.get('key'))
     send(socket_users(room), to=room)
 
 
@@ -220,16 +218,29 @@ def createlobby():
     form = Createlobby()
     owners = [(i.id, i.name) for i in Users.query.filter_by(type='teacher').all()]
     form.owmer.choices = owners
+    tasks = [i.id for i in Task.query.all()]
+    max_cnt = [i.count_tasks for i in Type.query.all()]
+    for i in tasks:
+        with open(os.path.join(app.root_path, 'static/source/tasks/task' + str(i) + '.jpg'), 'wb') as file:
+            file.write(Task.query.get(i).data)
+
     if request.method == "POST":
         if form.validate_on_submit():
+            ts = [i[4:] for i in form.tasks.data.split(',')]
             color = Factory.create().hex_color()
-            lobby = Lobbies(owner=form.owmer.data, type=form.type.data, color=color,
+            lobbie = Lobbies(owner=form.owmer.data, type=form.type.data, color=color,
                             keycode=hashlib.md5((color + str(form.owmer.data)).encode()).hexdigest())
-            db.session.add(lobby)
+            db.session.add(lobbie)
+            rt = r_in_t.query.filter_by(type_id=form.type.data).all()
+            for i in ts:
+                xy = random.choice(rt)
+                tl = t_in_l(lobbie_id=lobbie.id, task_id=i, status='INITIAL', X=xy.X, Y=xy.Y)
+                db.session.add(tl)
+
             db.session.commit()
             return redirect('/lobbies')
 
-    return render_template("createlobby.html", form=form)
+    return render_template("createlobby.html", form=form, tasks=tasks, str=str, max_cnt=max_cnt)
 
 
 @app.route('/lobbie/<string:key>', methods=['GET', 'POST'])
@@ -241,8 +252,9 @@ def lobbie(key):
     tasks = t_in_l.query.filter_by(lobbie_id=Lobbies.query.filter_by(keycode=key).first().id).all()
 
     for i in tasks:
-        with open(os.path.join(app.root_path, 'static/tasks/task' + i.task_id + '.jpg'), 'wb') as file:
+        with open(os.path.join(app.root_path, 'static/source/lobbie-tasks/task' + str(i.task_id) + '.jpg'), 'wb') as file:
             file.write(Task.query.get(i.task_id).data)
+    tasks = [[i.task_id, i.X, i.Y, int(Task.query.get(i.task_id).answer)] for i in tasks]
 
     with open(os.path.join(app.root_path, 'static/source/maps/map' + key + '.jpg'), 'wb') as file:
         file.write(type.map_img)
@@ -268,7 +280,18 @@ def lobbie(key):
 
     # print(type.map.decode())
 
-    return render_template("lobbie.html", key=key, map=type.map.decode(), user=session['name'], color=session['color'], text_color=text_color, len=len, ceil=ceil, L=Lobbies, U=Users, UL=u_in_l)
+    return render_template("lobbie.html",
+                           key=key,
+                           map=type.map.decode(),
+                           user=session['name'],
+                           color=session['color'],
+                           text_color=text_color,
+                           len=len,
+                           ceil=ceil,
+                           L=Lobbies,
+                           U=Users,
+                           UL=u_in_l,
+                           tasks=tasks)
 
 
 @app.route('/lobbieinfo/<string:key>', methods=['GET', 'POST'])
@@ -344,16 +367,17 @@ def refresh(key):
 def upload():
     form = Upload()
 
-    # if request.method == "POST":
-    #     file = request.files['input']
-    #     # t = Type.query.get(form.type.data)
-    #     # print(file.read())
-    #     # t.map = file.read()
-    #     task = Task(data=file.read())
-    #
-    #     db.session.add(task)
-    #     db.session.commit()
+    if request.method == "POST":
+        print('ok')
+        file = request.files['input']
+        t = Type.query.get(form.type.data)
+        # print(file.read())
+        t.map = file.read()
+        # task = Task(data=file.read())
 
+        # db.session.add(task)
+        db.session.commit()
+        # print(Type.query.get(form.type.data).map)
     # ts = Task.query.get(19)
 
     # with open(os.path.join(app.root_path, 'static/source/bg.jpg'), 'wb') as file:

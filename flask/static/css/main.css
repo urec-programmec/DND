@@ -240,3 +240,28 @@ body {
 .none {
     position: absolute !important;
 }
+
+.task {
+    height: 100px;
+    border-radius: 15px;
+}
+
+.task-container {
+    height: fit-content;
+}
+
+.selected-easy {
+    box-shadow: 0 0 40px rgb(0, 255, 0); 
+    border: 3px solid rgb(0, 255, 0);
+}
+
+.selected-normal {
+    box-shadow: 0 0 40px rgb(255, 208, 0); 
+    border: 3px solid rgb(255, 208, 0);
+
+}
+
+.selected-hard {
+    box-shadow: 0 0 40px rgb(255, 0, 0); 
+    border: 3px solid rgb(255, 0, 0);
+}

@@ -57,8 +57,12 @@
 </div>
 {% endmacro %}
 
-{% macro newlobbie(form) %}
+{% macro newlobbie(form, tasks, str, max_cnt) %}
 <div class="contain">
+    <script>
+        var max_cnt = {{ max_cnt }};
+        var index = 0;
+    </script>
     <form action="" method="post" class="form borderx fit-content">
     {{ form.hidden_tag() }}
     <h3>{{ form.owmer.label(class="text-light") }}</h3>
@@ -76,12 +80,25 @@
         {{ form.type.errors[0] }}
       </p>
     {% endif %}
-    <p>{{ form.submit(class="btn btn-success fill") }}</p>
+
+    <h4 class="text-light" id="tasks-counter">tasks (select {{max_cnt[0]}}): </h4>
+    <p><input class="" id="tasks" name="tasks" required="" type="hidden" value=""></p>
+    <div class="task-container fill" id="task-container">
+        {% for i in tasks %}
+            <div id="task{{ i }}" class="task fill" style="background-image: url('{{ url_for('static', filename='source/tasks/task' + str(i) + '.jpg') }}')"></div>
+            <hr>
+        {% endfor %}
+    </div>
+
+    <p>{{ form.submit(class="btn btn-success fill disabled") }}</p>
 
     {% for msg in get_flashed_messages() %}
       <div class="text-warning">{{msg}}</div>
     {% endfor %}
   </form>
+    <script>
+        $('#submit').prop('disabled', true);
+    </script>
 </div>
 {% endmacro %}
 

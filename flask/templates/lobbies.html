@@ -24,5 +24,8 @@
             {{ lobbie(i.color, i.owner, i.keycode, i.type, ul.query.filter_by(lobbie_id=i.id).all(), users, lobbies) }}
         {% endfor %}
     {% endif %}
-    {{ lobbiebutton() }}
+    {% if session['role'] == 'teacher' %}
+        {{ lobbiebutton() }}
+    {% endif %}
+
 {% endblock %}

@@ -2,10 +2,10 @@ $( document ).ready(function() {
     
     document.onkeydown = check;
 
-    // console.log(map);
+    console.log(tasks);
 
     socket.on('connect', function() {
-        socket.emit('start', {'key': key});
+        socket.emit('start', {'key': key});        
     });
 
     socket.on('message', function(data) {
@@ -512,7 +512,7 @@ $( document ).ready(function() {
     }
     
     function find(){
-        if (hero.room == -10)
+        if (hero.room == -10 && can_write)
             console.log('find');        
     }
 
