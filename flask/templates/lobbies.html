@@ -17,11 +17,11 @@
 
     {% if user %}
         {% for i in lobbies.query.filter_by(owner=user).all() %}
-            {{ lobbie(i.color, i.owner, i.keycode, i.type, ul.query.filter_by(lobbie_id=i.id).all(), users, lobbies) }}
+            {{ lobbie(i.color, i.owner, i.keycode, i.type, ul.query.filter_by(lobbie_id=i.id).all(), users, lobbies, me) }}
         {% endfor %}
     {% else %}
         {% for i in lobbies.query.all() %}
-            {{ lobbie(i.color, i.owner, i.keycode, i.type, ul.query.filter_by(lobbie_id=i.id).all(), users, lobbies) }}
+            {{ lobbie(i.color, i.owner, i.keycode, i.type, ul.query.filter_by(lobbie_id=i.id).all(), users, lobbies, me) }}
         {% endfor %}
     {% endif %}
     {% if session['role'] == 'teacher' %}

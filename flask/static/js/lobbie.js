@@ -533,10 +533,17 @@ $( document ).ready(function() {
     }
     
     function find(){
-        if (hero.room == -10 && can_write) {
+        if (!can_write)
+            return;
+        console.log(tasks);
+        console.log(hero.room == -10 ? tasks.find(t => (t[1] == hero.x && t[2] == hero.y)) : '');
+        // console.log(hero.x);
+        // console.log(hero.y);
+        if (hero.room == -10 && can_write && tasks.find(t => (t[1] == hero.x && t[2] == hero.y))[3] != 'OK') {
             for (let i in tasks){
                 if (tasks[i][1] == hero.x && tasks[i][2] == hero.y){
                     // $('#task' + tasks[i][0]).addClass('zz-100');
+                    socket.emit('task', {'key': key, 'task': tasks[i][0], 'resolver': me.name, 'status': 'IN PROGRESS'});        
                     $('#task' + tasks[i][0]).addClass('task-z-open');
                     clearTimeout(load_task);
                     load_task = setTimeout(() => {
@@ -570,8 +577,8 @@ $( document ).ready(function() {
         // console.log($('#task-i-' + e.originalEvent.srcElement.id.substr(7)));
         let id =  e.originalEvent.srcElement.id.substr(7);
         let val = $('#task-i-' + id).val() === undefined ? '' : $('#task-i-' + id).val()
-        console.log(val);
-        console.log(tasks.find(t => t[0] == id)[3]);
+        // console.log(val);
+        // console.log(tasks.find(t => t[0] == id)[3]);
         $('#task-i-' + id).removeClass('correct');
         $('#task-i-' + id).removeClass('incorrect');
         $('#task-b-' + id).removeClass('correct');
@@ -579,8 +586,10 @@ $( document ).ready(function() {
         if (val === tasks.find(t => t[0] == id)[3].toString()){
             $('#task-i-' + id).addClass('correct');
             $('#task-b-' + id).addClass('correct');
-            
-            // here
+            console.log(tasks.find(t => t[0] == id));
+            tasks.find(t => t[0] == id)[3] = 'OK';
+            console.log(tasks.find(t => t[0] == id));            
+            socket.emit('task', {'key': key, 'task': id, 'resolver': me.name, 'status': 'OK'});        
         }
         else {
             $('#task-i-' + id).addClass('incorrect');

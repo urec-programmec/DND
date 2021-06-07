@@ -102,13 +102,17 @@
 </div>
 {% endmacro %}
 
-{% macro lobbie(color, owner, keycode, type, users, U, L) %}
+{% macro lobbie(color, owner, keycode, type, users, U, L, me) %}
 <div class="contain">
     <div class="contain border-radius text-light h3 form {% if type == 1 %} {{ 'easy btn-outline-success' }} {% elif type == 2 %} {{ 'normal btn-outline-warning' }} {% else %} {{ 'hard btn-outline-danger' }} {% endif %}"
-    onclick="window.location.href='{% if session['role'] == 'student' %} {{ '/lobbie/' + keycode }} {% else %} {{ '/lobbieinfo/' + keycode }} {% endif %}'">
+    onclick="if(event.srcElement.id == 'goout') return; window.location.href='{% if session['role'] == 'student' %} {{ '/lobbie/' + keycode }} {% else %} {{ '/lobbieinfo/' + keycode }} {% endif %}'">
         <div class="contain flex-row" >
             <div class="icon-min" style="background: {{ color }}"></div>
             <div>&nbsp;owner: [ <u>{{ U.query.get(owner).name }}</u> ]</div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            {% if U.query.get(owner).name == me %}
+                <div id="goout" class="h6 btn btn-outline-warning" onclick="window.location.href='/deletelobbie/{{keycode}}'">delete</div>
+            {% endif %}
         </div>
         {% if users %}
             <div class="contain h6 flex-row-min">

@@ -62,3 +62,7 @@ function select(){
     $('#tasks-counter').text(text);
     $('.selected').addClass(selected_class);
 }
+
+function open(e){
+
+}

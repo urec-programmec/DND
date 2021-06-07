@@ -121,9 +121,25 @@ def start(data):
     join_room(room)
     send(socket_users(room), to=room)
 
+@socketio.on('task')
+def task(data):
+    lobbie_id = Lobbies.query.filter_by(keycode=data['key']).first().id
+    task_id = data['task']
+    resolver = Users.query.filter_by(name=data['resolver']).first().id
+    status = data['status']
+
+    tl = t_in_l.query.filter_by(lobbie_id=lobbie_id, task_id=task_id).first()
+    if tl.status == 'INITIAL' or (tl.status == 'IN PROGRESS' and status == 'OK'):
+        tl.resolver = resolver
+        tl.status = status
+        db.session.commit()
+
+    # join_room(room)
+    # send(socket_users(room), to=room)
+
 @socketio.on('go')
 def go(data):
-    print(data)
+    # print(data)
     key = data['key']
     x = data['X']
     y = data['Y']
@@ -208,7 +224,7 @@ def lobbies():
 def mylobbies():
     if not session.get('name'):
         return redirect('/')
-    return render_template("lobbies.html", lobbies=Lobbies, ul=u_in_l, users=Users, user=Users.query.filter_by(name=session['name']).first().id)
+    return render_template("lobbies.html", lobbies=Lobbies, ul=u_in_l, users=Users, user=Users.query.filter_by(name=session['name']).first().id, me=session['name'])
 
 
 @app.route('/createlobby', methods=['GET', 'POST'])
@@ -232,15 +248,41 @@ def createlobby():
                             keycode=hashlib.md5((color + str(form.owmer.data)).encode()).hexdigest())
             db.session.add(lobbie)
             rt = r_in_t.query.filter_by(type_id=form.type.data).all()
+            choosen = []
             for i in ts:
                 xy = random.choice(rt)
-                tl = t_in_l(lobbie_id=lobbie.id, task_id=i, status='INITIAL', X=xy.X, Y=xy.Y)
+                while [xy.X, xy.Y, i] in choosen:
+                    xy = random.choice(rt)
+                choosen.append([xy.X, xy.Y, i])
+
+            for i in choosen:
+                tl = t_in_l(lobbie_id=lobbie.id, task_id=i[2], status='INITIAL', X=i[0], Y=i[1])
                 db.session.add(tl)
 
             db.session.commit()
             return redirect('/lobbies')
 
     return render_template("createlobby.html", form=form, tasks=tasks, str=str, max_cnt=max_cnt)
+
+
+@app.route('/deletelobbie/<string:key>')
+def deletelobbie(key):
+    if not session.get('name'):
+        return redirect('/')
+
+    print(key)
+    print(Lobbies.query.filter_by(keycode=key).first())
+    id = Lobbies.query.filter_by(keycode=key).first().id
+    for i in u_in_l.query.filter_by(lobbie_id=id).all():
+        db.session.delete(i)
+
+    for i in t_in_l.query.filter_by(lobbie_id=id).all():
+        db.session.delete(i)
+
+    db.session.delete(Lobbies.query.get(id))
+    db.session.commit()
+    print('all')
+    return redirect("/mylobbies")
 
 
 @app.route('/lobbie/<string:key>', methods=['GET', 'POST'])
@@ -368,7 +410,7 @@ def upload():
     form = Upload()
 
     if request.method == "POST":
-        print('ok')
+        # print('ok')
         file = request.files['input']
         t = Type.query.get(form.type.data)
         # print(file.read())
