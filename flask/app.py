@@ -100,6 +100,7 @@ class t_in_l(db.Model):
     resolver = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=False, nullable=True)
     X = db.Column(db.Integer, primary_key=False)
     Y = db.Column(db.Integer, primary_key=False)
+    type = db.Column(db.String(15), primary_key=False)
 
     def __repr__(self):
         return '<TL %r>' % str(self.user_id) + " " + str(self.lobbie_id)
@@ -133,9 +134,13 @@ def task(data):
         tl.resolver = resolver
         tl.status = status
         db.session.commit()
+    tasks = t_in_l.query.filter_by(lobbie_id=Lobbies.query.filter_by(keycode=data['key']).first().id).all()
 
-    # join_room(room)
-    # send(socket_users(room), to=room)
+    tasks = {'data':[[i.task_id, i.X, i.Y, (Task.query.get(i.task_id).answer if t_in_l.query.filter_by(
+        lobbie_id=Lobbies.query.filter_by(keycode=data['key']).first().id,
+        task_id=i.task_id).first().status != 'OK' else 'OK'), i.type] for i in tasks]}
+
+    send(tasks, to=data['key'])
 
 @socketio.on('go')
 def go(data):
@@ -216,7 +221,7 @@ def lobbies():
     if session.get('key'):
         return redirect('lobbie/' + session['key'])
 
-    return render_template("lobbies.html", lobbies=Lobbies, ul=u_in_l, users=Users, user=None)
+    return render_template("lobbies.html", lobbies=Lobbies, ul=u_in_l, users=Users, user=None, me=session['name'])
 
 
 
@@ -255,8 +260,10 @@ def createlobby():
                     xy = random.choice(rt)
                 choosen.append([xy.X, xy.Y, i])
 
+            counter = 0
             for i in choosen:
-                tl = t_in_l(lobbie_id=lobbie.id, task_id=i[2], status='INITIAL', X=i[0], Y=i[1])
+                tl = t_in_l(lobbie_id=lobbie.id, task_id=i[2], status='INITIAL', X=i[0], Y=i[1], type='sand' if counter % 3 == 0 else ('wick' if counter % 3 == 1 else 'powred'))
+                counter += 1
                 db.session.add(tl)
 
             db.session.commit()
@@ -296,7 +303,10 @@ def lobbie(key):
     for i in tasks:
         with open(os.path.join(app.root_path, 'static/source/lobbie-tasks/task' + str(i.task_id) + '.jpg'), 'wb') as file:
             file.write(Task.query.get(i.task_id).data)
-    tasks = [[i.task_id, i.X, i.Y, int(Task.query.get(i.task_id).answer)] for i in tasks]
+
+    tasks = [[i.task_id, i.X, i.Y, (Task.query.get(i.task_id).answer if t_in_l.query.filter_by(
+        lobbie_id=Lobbies.query.filter_by(keycode=key).first().id,
+        task_id=i.task_id).first().status != 'OK' else 'OK'), i.type] for i in tasks]
 
     with open(os.path.join(app.root_path, 'static/source/maps/map' + key + '.jpg'), 'wb') as file:
         file.write(type.map_img)
@@ -333,6 +343,8 @@ def lobbie(key):
                            L=Lobbies,
                            U=Users,
                            UL=u_in_l,
+                           TL=t_in_l,
+                           Ta=Task,
                            tasks=tasks)
 
 
@@ -341,7 +353,14 @@ def lobbyinfo(key):
     if not session.get('name'):
         return redirect('/')
 
-    return render_template("lobbieinfo.html", key=key)
+    tasks = [[str(i.task_id), i.status, i.resolver] for i in t_in_l.query.filter_by(lobbie_id=Lobbies.query.filter_by(keycode=key).first().id).all()]
+
+    for i in tasks:
+        with open(os.path.join(app.root_path, 'static/source/lobbie-tasks/task' + str(i[0]) + '.jpg'),
+                  'wb') as file:
+            file.write(Task.query.get(i[0]).data)
+
+    return render_template("lobbieinfo.html", key=key, lobbies=Lobbies, ul=u_in_l, users=Users, user=None, type=Lobbies.query.filter_by(keycode=key).first().type, tasks=tasks)
 
 
 @app.route('/leavelobbie', methods=['GET', 'POST'])

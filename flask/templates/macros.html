@@ -1,4 +1,4 @@
-{% macro footer(session, title) %}
+{% macro footer(session, title, color) %}
     <div class="contain">
         <div class="icon contain" style="background: {{session['color']}}; color: {{session['textColor']}}">
             <div class="i">{{session['name']}}</div>
@@ -6,7 +6,12 @@
         <div class="xicon contain xfone" id="profile-open">
             <div class="h4">profile</div>
         </div>
-        <h1 class="text-light contain">{{title}}</h1>
+        {% if color %}
+            <h1 class="text-light contain {% if type == 1 %} {{ 'btn btn-success' }} {% elif type == 2 %} {{ 'btn btn-warning' }} {% else %} {{ 'btn btn-danger' }} {% endif %}">{{title}}</h1>
+        {% else %}
+            <h1 class="text-light contain">{{title}}</h1>
+        {% endif %}
+        <hr>
     </div>
 {% endmacro %}
 
@@ -16,6 +21,11 @@
 
     {% if session.get('key') %}
         <div class="menu text-light h6 {% if L.query.filter_by(keycode=session['key']).first().type == 1 %} {{ 'btn btn-success' }} {% elif L.query.filter_by(keycode=session['key']).first().type == 2 %} {{ 'btn btn-warning' }} {% else %} {{ 'btn btn-danger' }} {% endif %}">[ {{session['key']}} ]</div>
+        <div class="menu text-light h3"><u>resources:</u></div>
+        <hr>
+            <div>sand: <u id="sand" class="h3"></u></div>
+            <div>wick: <u id="wick" class="h3"></u></div>
+            <div>powred: <u id="powred" class="h3"></u></div>
         <hr>
         <div class="menu text-light h3"><u>lobbie users:</u></div>
         <hr>
@@ -48,6 +58,7 @@
 
 {% macro lobbiebutton() %}
 <div class="contain">
+    <hr>
     <button class="contain flex-row border-g text-light h2 btn-success " onclick="window.location.href='/createlobby'">
         <div class="border-g">&nbsp;+&nbsp;</div>
         <div>&nbsp;create new lobbie&nbsp;</div>
@@ -105,7 +116,7 @@
 {% macro lobbie(color, owner, keycode, type, users, U, L, me) %}
 <div class="contain">
     <div class="contain border-radius text-light h3 form {% if type == 1 %} {{ 'easy btn-outline-success' }} {% elif type == 2 %} {{ 'normal btn-outline-warning' }} {% else %} {{ 'hard btn-outline-danger' }} {% endif %}"
-    onclick="if(event.srcElement.id == 'goout') return; window.location.href='{% if session['role'] == 'student' %} {{ '/lobbie/' + keycode }} {% else %} {{ '/lobbieinfo/' + keycode }} {% endif %}'">
+    onclick="if(event.srcElement.id == 'goout') return; window.location.href='{% if session['role'] == 'student' %} {{ '/lobbie/' + keycode }} {% else %} {% if U.query.get(owner).name == me %} {{ '/lobbieinfo/' + keycode }} {% endif %} {% endif %}'">
         <div class="contain flex-row" >
             <div class="icon-min" style="background: {{ color }}"></div>
             <div>&nbsp;owner: [ <u>{{ U.query.get(owner).name }}</u> ]</div>

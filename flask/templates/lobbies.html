@@ -9,9 +9,9 @@
     {{ profile(session, lobbies, users, ul) }}
 
     {% if user %}
-        {{ footer(session, '#your lobbies') }}
+        {{ footer(session, '#your lobbies', False) }}
     {% else %}
-        {{ footer(session, '#all lobbies') }}
+        {{ footer(session, '#all lobbies', False) }}
     {% endif %}
 
 

@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block body %}
-    {{ footer(session, '#creating lobby') }}
+    {{ footer(session, '#creating lobby', False) }}
 
     {{ newlobbie(form, tasks, str, max_cnt) }}
 

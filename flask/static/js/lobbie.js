@@ -2,7 +2,7 @@ $( document ).ready(function() {
     
     document.onkeydown = check;
 
-    console.log(tasks);
+    // console.log(tasks);
 
     socket.on('connect', function() {
         socket.emit('start', {'key': key});        
@@ -14,6 +14,13 @@ $( document ).ready(function() {
         // console.log(users)
         // console.log('---')
 
+        if (data.data){
+            console.log(data);
+            tasks = data.data;
+            init_resources();
+            return;
+        }
+
         if (Object.keys(users).length - 1 > Object.keys(data).length){
             names = []
             for (let i in data)
@@ -21,7 +28,7 @@ $( document ).ready(function() {
 
             for (let i in users){
                 if (names.indexOf(users[i].name) == -1 && users[i].name != 'hero2'){
-                    console.log('delete');
+                    // console.log('delete');
                     $("#" + users[i].name).remove();
                     $("#" + users[i].name + "-x").remove();
                     $("#" + users[i].name + "-t1").remove();
@@ -33,7 +40,7 @@ $( document ).ready(function() {
             }
         }
         else if (Object.keys(users).length - 1 < Object.keys(data).length){
-            console.log('add');
+            // console.log('add');
             let yet = true;
             for (let i in data){
                 if (Object.keys(users).indexOf(data[i].name) == -1 && yet){
@@ -131,8 +138,10 @@ $( document ).ready(function() {
     var init_access = true;
 
     for (let i in tasks){
-        $('body').append(template_task(tasks[i], 'sand'));
+        $('body').append(template_task(tasks[i]));
     }
+
+    init_resources();
 
     full_init();
 
@@ -502,17 +511,19 @@ $( document ).ready(function() {
             <div id="` + user.name + "-x" + `" class="delete map text-light left" style="z-index: 2"></div>`
     }
 
-    function template_task(task, what){
+    function template_task(task){
+        text_color = (hex_rgb(me.color).r * 0.299 + hex_rgb(me.color).g * 0.587 + hex_rgb(me.color).b * 0.114) > 150 ?'rgba(0, 0, 0, 1)' : 'rgba(255, 255, 255, 1)'
+        
         return `
         <div id="task` + task[0] + `" class="task" style="background: rgba(` + hex_rgb(me.color).r + `, ` + hex_rgb(me.color).g + `, ` + hex_rgb(me.color).b + `, 0.5) !important;">
             <hr>
-            <h2>#get ` + what + `</h2>
+            <h2 style="color: ` + text_color + `">#get ` + task[4] + `</h2>
             <img style="width:fit-content; height:fit-content; border-radius: 15px;" src="/static/source/lobbie-tasks/task` + task[0] + `.jpg"></img>
             <hr>
-            <h2>#answer</h2>
+            <h2 style="color: ` + text_color + `">#answer</h2>
             <input type="text" id="task-i-` + task[0] + `" class="text-send form-control" style="width: 50% !important; padding-left:20px; padding-right:20px; margin-left:20px; margin-right:20px;">
             <hr>
-            <button id="task-b-` + task[0] + `" class="h send xfone menu btn" style="width: 50% !important; padding-left:20px; padding-right:20px; margin-left:20px; margin-right:20px;">get</button>
+            <button id="task-b-` + task[0] + `" class="h send xfone menu btn" style="width: 50% !important; padding-left:20px; padding-right:20px; margin-left:20px; margin-right:20px;">get ` + task[4] + `</button>
             <hr>
         </div>
         `
@@ -535,11 +546,12 @@ $( document ).ready(function() {
     function find(){
         if (!can_write)
             return;
-        console.log(tasks);
-        console.log(hero.room == -10 ? tasks.find(t => (t[1] == hero.x && t[2] == hero.y)) : '');
+        // console.log(tasks);
+        // console.log(hero.room == -10 ? tasks.find(t => (t[1] == hero.x && t[2] == hero.y)) : '');
         // console.log(hero.x);
         // console.log(hero.y);
-        if (hero.room == -10 && can_write && tasks.find(t => (t[1] == hero.x && t[2] == hero.y))[3] != 'OK') {
+        if (hero.room == -10 && can_write && tasks.find(t => (t[1] == hero.x && t[2] == hero.y)) 
+            && tasks.find(t => (t[1] == hero.x && t[2] == hero.y))[3] != 'OK') {
             for (let i in tasks){
                 if (tasks[i][1] == hero.x && tasks[i][2] == hero.y){
                     // $('#task' + tasks[i][0]).addClass('zz-100');
@@ -561,6 +573,23 @@ $( document ).ready(function() {
                 $('.task').removeClass('task-t-open');
             }, 1000);
         }                    
+    }
+
+    function init_resources(){
+        if (tasks.filter(t => t[3] == 'OK' && t[4] == 'sand'))
+            $('#sand').text(tasks.filter(t => t[3] == 'OK' && t[4] == 'sand').length);
+        else 
+            $('#sand').text(0);
+
+        if (tasks.filter(t => t[3] == 'OK' && t[4] == 'wick'))
+            $('#wick').text(tasks.filter(t => t[3] == 'OK' && t[4] == 'wick').length);
+        else 
+            $('#sand').text(0);
+
+        if (tasks.filter(t => t[3] == 'OK' && t[4] == 'powred'))
+            $('#powred').text(tasks.filter(t => t[3] == 'OK' && t[4] == 'powred').length);
+        else 
+            $('#powred').text(0);
     }
 
     $('#profile-open').on("click", () => {
@@ -586,9 +615,9 @@ $( document ).ready(function() {
         if (val === tasks.find(t => t[0] == id)[3].toString()){
             $('#task-i-' + id).addClass('correct');
             $('#task-b-' + id).addClass('correct');
-            console.log(tasks.find(t => t[0] == id));
+            // console.log(tasks.find(t => t[0] == id));
             tasks.find(t => t[0] == id)[3] = 'OK';
-            console.log(tasks.find(t => t[0] == id));            
+            init_resources();           
             socket.emit('task', {'key': key, 'task': id, 'resolver': me.name, 'status': 'OK'});        
         }
         else {
